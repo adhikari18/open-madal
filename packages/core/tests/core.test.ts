@@ -154,5 +154,51 @@ describe('@open-madal/core parser & AST', () => {
     expect(timeline[2].rationalOffset).toEqual({ numerator: 2, denominator: 3 });
     expect(timeline[3].rationalOffset).toEqual({ numerator: 1, denominator: 1 });
   });
+
+  it('parses arbitrary-depth nested tuplets with exact rational beat fractions and nesting depth', () => {
+    const src = `
+@meter: 4/4
+| [Ti [Ka Ki] Ta] [Dha [Ti [Ka Ki] Ta]] [Ti Ta Ki] Dha |
+`;
+    const ast = parseMadalCode(src);
+    expect(ast.diagnostics).toHaveLength(0);
+    const beats = ast.sections[0].bars[0].beats;
+    expect(beats).toHaveLength(4);
+
+    // Beat 1: [Ti [Ka Ki] Ta] -> 1/3, 1/6, 1/6, 1/3
+    const b1 = beats[0].subdivisions;
+    expect(b1).toHaveLength(4);
+    expect(b1.map((s) => s.bol)).toEqual(['Ti', 'Ka', 'Ki', 'Ta']);
+    expect(b1.map((s) => s.rationalDuration)).toEqual([
+      { numerator: 1, denominator: 3 },
+      { numerator: 1, denominator: 6 },
+      { numerator: 1, denominator: 6 },
+      { numerator: 1, denominator: 3 },
+    ]);
+    expect(b1.map((s) => s.tupletDepth)).toEqual([1, 2, 2, 1]);
+
+    // Beat 2: [Dha [Ti [Ka Ki] Ta]] -> 1/2, 1/6, 1/12, 1/12, 1/6 (depth up to 3)
+    const b2 = beats[1].subdivisions;
+    expect(b2).toHaveLength(5);
+    expect(b2.map((s) => s.rationalDuration)).toEqual([
+      { numerator: 1, denominator: 2 },
+      { numerator: 1, denominator: 6 },
+      { numerator: 1, denominator: 12 },
+      { numerator: 1, denominator: 12 },
+      { numerator: 1, denominator: 6 },
+    ]);
+    expect(b2.map((s) => s.tupletDepth)).toEqual([1, 2, 3, 3, 2]);
+
+    // Beat 4: whole beat Dha -> 1/1, depth 0
+    expect(beats[3].subdivisions[0].rationalDuration).toEqual({
+      numerator: 1,
+      denominator: 1,
+    });
+    expect(beats[3].subdivisions[0].tupletDepth).toBe(0);
+
+    // Verify unmatched bracket diagnostic recovery
+    const malformed = parseMadalCode('| [Ti [Ka Ki] Dha |');
+    expect(malformed.diagnostics.some((d) => d.message.includes('Unclosed subdivision bracket'))).toBe(true);
+  });
 });
 

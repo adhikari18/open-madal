@@ -149,9 +149,166 @@ export function parseBolToken(
   };
 }
 
+interface SubdivisionSyntaxItem {
+  kind: 'token' | 'group';
+  text: string;
+  col: number;
+}
+
+/**
+ * Tokenize a bar or bracket interior into top-level tokens and balanced bracket groups.
+ * Handles arbitrary nesting depth and emits diagnostics for unmatched '[' or ']'.
+ */
+function splitSubdivisionItems(
+  content: string,
+  lineNum: number,
+  baseCol: number,
+  diagnostics: ParseDiagnostic[]
+): SubdivisionSyntaxItem[] {
+  const items: SubdivisionSyntaxItem[] = [];
+  let i = 0;
+
+  while (i < content.length) {
+    if (/\s/.test(content[i])) {
+      i++;
+      continue;
+    }
+
+    if (content[i] === '[') {
+      const startIdx = i;
+      const startCol = baseCol + i;
+      let depth = 1;
+      i++;
+      while (i < content.length && depth > 0) {
+        if (content[i] === '[') depth++;
+        else if (content[i] === ']') depth--;
+        i++;
+      }
+
+      if (depth > 0) {
+        diagnostics.push({
+          severity: 'warning',
+          message: 'Unclosed subdivision bracket "[" — automatically closed at end of group.',
+          line: lineNum,
+          column: startCol,
+        });
+        items.push({
+          kind: 'group',
+          text: content.slice(startIdx + 1),
+          col: startCol + 1,
+        });
+      } else {
+        items.push({
+          kind: 'group',
+          text: content.slice(startIdx + 1, i - 1),
+          col: startCol + 1,
+        });
+      }
+      continue;
+    }
+
+    if (content[i] === ']') {
+      diagnostics.push({
+        severity: 'warning',
+        message: 'Unexpected closing subdivision bracket "]" ignored.',
+        line: lineNum,
+        column: baseCol + i,
+      });
+      i++;
+      continue;
+    }
+
+    const startIdx = i;
+    const startCol = baseCol + i;
+    while (
+      i < content.length &&
+      !/\s/.test(content[i]) &&
+      content[i] !== '[' &&
+      content[i] !== ']'
+    ) {
+      i++;
+    }
+    items.push({
+      kind: 'token',
+      text: content.slice(startIdx, i),
+      col: startCol,
+    });
+  }
+
+  return items;
+}
+
+/**
+ * Recursively expand a bracketed subdivision group into flat leaf BolTokenNodes
+ * with exact rational beat fractions and nesting depth tracking.
+ */
+function expandSubdivisionGroup(
+  innerText: string,
+  lineNum: number,
+  baseCol: number,
+  parentDuration: RationalFraction,
+  depth: number,
+  diagnostics: ParseDiagnostic[]
+): BolTokenNode[] {
+  const items = splitSubdivisionItems(innerText, lineNum, baseCol, diagnostics);
+  if (items.length === 0) {
+    const bracketCol = Math.max(1, baseCol - 1);
+    diagnostics.push({
+      severity: 'warning',
+      message: 'Empty subdivision bracket [] treated as rest.',
+      line: lineNum,
+      column: bracketCol,
+    });
+    return [
+      parseBolToken(
+        '-',
+        rationalToNumber(parentDuration),
+        lineNum,
+        bracketCol,
+        diagnostics,
+        parentDuration,
+        depth
+      ),
+    ];
+  }
+
+  const childDuration = divideRationalByInt(parentDuration, items.length);
+  const childFraction = rationalToNumber(childDuration);
+  const result: BolTokenNode[] = [];
+
+  for (const item of items) {
+    if (item.kind === 'token') {
+      result.push(
+        parseBolToken(
+          item.text,
+          childFraction,
+          lineNum,
+          item.col,
+          diagnostics,
+          childDuration,
+          depth
+        )
+      );
+    } else {
+      result.push(
+        ...expandSubdivisionGroup(
+          item.text,
+          lineNum,
+          item.col,
+          childDuration,
+          depth + 1,
+          diagnostics
+        )
+      );
+    }
+  }
+
+  return result;
+}
+
 /**
  * Parse a bar segment's content into BeatCellNodes.
- * Supports single tokens (`Dha`, `-`, `Ti`) and bracketed sub-beat groups (`[Ti Ta]`, `[Ghe Ti Ta]`).
+ * Supports single tokens (`Dha`, `-`, `Ti`) and arbitrary-depth bracketed tuplets (`[Ti Ta]`, `[Ti [Ra Ki] Ta]`).
  */
 function parseBarCells(
   barContent: string,
@@ -163,39 +320,30 @@ function parseBarCells(
   const beats: BeatCellNode[] = [];
   // Allow ':' as a visual Vibhag (sub-bar) separator inside a bar
   const normalizedContent = barContent.replace(/:/g, ' ');
-  const tokenRegex = /\[([^\]]+)\]|(\S+)/g;
-  let match: RegExpExecArray | null;
+  const topLevelItems = splitSubdivisionItems(
+    normalizedContent,
+    lineNum,
+    baseCol,
+    diagnostics
+  );
   let beatIdx = 1;
   const wholeBeat = createRational(1, 1);
 
-  while ((match = tokenRegex.exec(normalizedContent)) !== null) {
-    const col = baseCol + match.index;
-    const bracketInner = match[1];
-    const singleToken = match[2];
-
+  for (const item of topLevelItems) {
     let subdivisions: BolTokenNode[] = [];
-    if (bracketInner !== undefined) {
-      const subParts = bracketInner
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean);
-      if (subParts.length === 0) {
-        diagnostics.push({
-          severity: 'warning',
-          message: 'Empty subdivision bracket [] treated as rest.',
-          line: lineNum,
-          column: col,
-        });
-        subdivisions = [parseBolToken('-', 1, lineNum, col, diagnostics, wholeBeat, 0)];
-      } else {
-        const subRational = divideRationalByInt(wholeBeat, subParts.length);
-        const frac = rationalToNumber(subRational);
-        subdivisions = subParts.map((part, idx) =>
-          parseBolToken(part, frac, lineNum, col + 1 + idx * 2, diagnostics, subRational, 1)
-        );
-      }
-    } else if (singleToken !== undefined) {
-      subdivisions = [parseBolToken(singleToken, 1, lineNum, col, diagnostics, wholeBeat, 0)];
+    if (item.kind === 'group') {
+      subdivisions = expandSubdivisionGroup(
+        item.text,
+        lineNum,
+        item.col,
+        wholeBeat,
+        1,
+        diagnostics
+      );
+    } else {
+      subdivisions = [
+        parseBolToken(item.text, 1, lineNum, item.col, diagnostics, wholeBeat, 0),
+      ];
     }
 
     let vibhagMarker: 'sam' | 'tali' | 'khali' | undefined;
