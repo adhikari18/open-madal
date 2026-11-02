@@ -66,11 +66,11 @@ The compiler accepts both canonical *bols* and regional oral aliases (such as `G
 | Canonical Bol | Regional Aliases | Devanagari | Drumhead(s) | Articulation | Physical Technique |
 | :--- | :--- | :---: | :---: | :---: | :--- |
 | **`Ghe`** / **`Ga`** / **`Dhum`** | `Ge`, `Ghin` | घे / ग / धुम | **Bhale** (Left Bass) | Open (`khula`) | Open resonant bass strike on the larger head |
-| **`Ka`** | `Kat`, `Khat` | का | **Bhale** (Left Bass) | Closed (`bandha`) | Flat-palm muted slap on the bass head |
-| **`Ta`** / **`Na`** | `Tan` | ता / ना | **Pothi** (Right Treble) | Rim (`kinara`) | Crisp finger strike on the treble rim/edge |
+| **`Ka`** | `Kha`, `Kat`, `Khat` | का | **Bhale** (Left Bass) | Closed (`bandha`) | Flat-palm muted slap on the bass head |
+| **`Ta`** / **`Na`** | `Tak`, `Tan` | ता / ना | **Pothi** (Right Treble) | Rim (`kinara`) | Crisp finger strike on the treble rim/edge |
 | **`Ti`** / **`Tin`** | `Tang` | ति / तिन | **Pothi** (Right Treble) | Open (`khula`) | Resonant strike on the center black *khari* spot |
 | **`Ki`** | — | कि | **Pothi** (Right Treble) | Closed (`bandha`) | Muted treble finger tap |
-| **`Dha`** | — | धा | **Both** (`Ghe` + `Ta`) | Compound Open | Simultaneous open bass `Ghe` + crisp treble `Ta` |
+| **`Dha`** | `Dhang` | धा | **Both** (`Ghe` + `Ta`) | Compound Open | Simultaneous open bass `Ghe` + crisp treble `Ta` |
 | **`Dhin`** | `Dhi` | धिन | **Both** (`Ghe` + `Tin`) | Compound Ring | Simultaneous open bass `Ghe` + ringing treble `Tin` |
 | **`Dhing`** | — | धिङ | **Both** (`Ghe^` + `Tin`) | Pitch-Bend | Bass strike with palm-heel pressure pitch-slide + `Tin` |
 | **`-`** / **`~`** | — | ऽ / 〜 | None | Rest / Sustain | Silent pause (`-`) or let previous stroke ring (`~`) |

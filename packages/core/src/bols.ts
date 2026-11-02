@@ -223,9 +223,12 @@ export const REGIONAL_BOL_ALIASES: Record<string, CanonicalBolId> = {
   ghin: 'Ghe',
   kat: 'Ka',
   khat: 'Ka',
+  kha: 'Ka',
   tang: 'Tin',
   tan: 'Ta',
+  tak: 'Ta',
   dhi: 'Dhin',
+  dhang: 'Dha',
 };
 
 /**
