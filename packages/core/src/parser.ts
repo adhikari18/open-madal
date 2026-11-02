@@ -1,4 +1,5 @@
 import { resolveBol } from './bols.js';
+import { addRational, createRational, divideRationalByInt, rationalToNumber } from './rational.js';
 import {
   BarNode,
   BeatCellNode,
@@ -7,6 +8,7 @@ import {
   MadalDocumentMetadata,
   MadalProgramAST,
   ParseDiagnostic,
+  RationalFraction,
   SectionNode,
   StrokeModifiers,
   TimeSignature,
@@ -46,7 +48,9 @@ export function parseBolToken(
   durationFractions: number,
   line: number,
   column: number,
-  diagnostics: ParseDiagnostic[]
+  diagnostics: ParseDiagnostic[],
+  rationalDuration: RationalFraction = createRational(1, 1),
+  tupletDepth = 0
 ): BolTokenNode {
   let working = rawToken.trim();
   const modifiers: StrokeModifiers = {};
@@ -103,6 +107,8 @@ export function parseBolToken(
       raw: rawToken,
       modifiers,
       durationFractions,
+      rationalDuration,
+      tupletDepth,
       line,
       column,
     };
@@ -136,6 +142,8 @@ export function parseBolToken(
     bhale,
     pothi,
     durationFractions,
+    rationalDuration,
+    tupletDepth,
     line,
     column,
   };
@@ -158,6 +166,7 @@ function parseBarCells(
   const tokenRegex = /\[([^\]]+)\]|(\S+)/g;
   let match: RegExpExecArray | null;
   let beatIdx = 1;
+  const wholeBeat = createRational(1, 1);
 
   while ((match = tokenRegex.exec(normalizedContent)) !== null) {
     const col = baseCol + match.index;
@@ -177,15 +186,16 @@ function parseBarCells(
           line: lineNum,
           column: col,
         });
-        subdivisions = [parseBolToken('-', 1, lineNum, col, diagnostics)];
+        subdivisions = [parseBolToken('-', 1, lineNum, col, diagnostics, wholeBeat, 0)];
       } else {
-        const frac = 1 / subParts.length;
+        const subRational = divideRationalByInt(wholeBeat, subParts.length);
+        const frac = rationalToNumber(subRational);
         subdivisions = subParts.map((part, idx) =>
-          parseBolToken(part, frac, lineNum, col + 1 + idx * 2, diagnostics)
+          parseBolToken(part, frac, lineNum, col + 1 + idx * 2, diagnostics, subRational, 1)
         );
       }
     } else if (singleToken !== undefined) {
-      subdivisions = [parseBolToken(singleToken, 1, lineNum, col, diagnostics)];
+      subdivisions = [parseBolToken(singleToken, 1, lineNum, col, diagnostics, wholeBeat, 0)];
     }
 
     let vibhagMarker: 'sam' | 'tali' | 'khali' | undefined;
@@ -404,7 +414,7 @@ export function parseMadalCode(source: string): MadalProgramAST {
 export function flattenTimeline(ast: MadalProgramAST): FlattenedTimelineEvent[] {
   const events: FlattenedTimelineEvent[] = [];
   const secondsPerBeat = 60 / ast.metadata.tempo;
-  let currentBeatOffset = 0;
+  let currentRationalOffset = createRational(0, 1);
   let sequentialBarIndex = 1;
 
   for (const section of ast.sections) {
@@ -415,7 +425,9 @@ export function flattenTimeline(ast: MadalProgramAST): FlattenedTimelineEvent[] 
           const totalSubs = beatCell.subdivisions.length;
           for (let s = 0; s < totalSubs; s++) {
             const token = beatCell.subdivisions[s];
-            const durationBeats = token.durationFractions;
+            const rationalDuration = token.rationalDuration ?? createRational(1, totalSubs);
+            const beatOffset = rationalToNumber(currentRationalOffset);
+            const durationBeats = rationalToNumber(rationalDuration);
             const baseVelocity = token.bol === '-' || token.bol === '~' ? 0 : 100;
             const accentedVelocity = token.modifiers.accent
               ? Math.min(127, baseVelocity + 22)
@@ -424,9 +436,11 @@ export function flattenTimeline(ast: MadalProgramAST): FlattenedTimelineEvent[] 
               : baseVelocity;
 
             events.push({
-              beatOffset: currentBeatOffset,
+              beatOffset,
               durationBeats,
-              timeSeconds: currentBeatOffset * secondsPerBeat,
+              rationalOffset: currentRationalOffset,
+              rationalDuration,
+              timeSeconds: beatOffset * secondsPerBeat,
               durationSeconds: durationBeats * secondsPerBeat,
               barIndex: sequentialBarIndex,
               beatInBar: beatCell.beatNumber,
@@ -437,7 +451,7 @@ export function flattenTimeline(ast: MadalProgramAST): FlattenedTimelineEvent[] 
               velocity: accentedVelocity,
             });
 
-            currentBeatOffset += durationBeats;
+            currentRationalOffset = addRational(currentRationalOffset, rationalDuration);
           }
         }
         sequentialBarIndex++;

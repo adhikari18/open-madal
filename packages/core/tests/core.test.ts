@@ -2,8 +2,13 @@ import { describe, expect, it } from 'vitest';
 import {
   BOL_DICTIONARY,
   TAAL_PRESETS,
+  addRational,
   compileToMidi,
+  createRational,
+  divideRationalByInt,
   flattenTimeline,
+  formatRational,
+  multiplyRational,
   parseMadalCode,
   renderLinearTabSVG,
   renderRadialClockSVG,
@@ -123,6 +128,31 @@ describe('@open-madal/core parser & AST', () => {
     expect(beats[1].subdivisions[0].bol).toBe('Tin');
     expect(beats[2].subdivisions[0].bol).toBe('Ka');
     expect(beats[3].subdivisions[0].bol).toBe('Dhin');
+  });
+
+  it('computes exact lowest-terms rational beat fractions without floating-point drift', () => {
+    const oneThird = createRational(1, 3);
+    const oneSixth = divideRationalByInt(oneThird, 2);
+    expect(oneSixth).toEqual({ numerator: 1, denominator: 6 });
+    expect(formatRational(oneSixth)).toBe('1/6');
+
+    const sum = addRational(
+      addRational(oneThird, oneSixth),
+      addRational(oneSixth, oneThird)
+    );
+    expect(sum).toEqual({ numerator: 1, denominator: 1 });
+    expect(formatRational(sum)).toBe('1');
+    expect(multiplyRational(createRational(2, 3), createRational(3, 4))).toEqual({
+      numerator: 1,
+      denominator: 2,
+    });
+
+    const ast = parseMadalCode('| [Ti Ta Ki] Dha |');
+    const timeline = flattenTimeline(ast);
+    expect(timeline[0].rationalDuration).toEqual({ numerator: 1, denominator: 3 });
+    expect(timeline[1].rationalOffset).toEqual({ numerator: 1, denominator: 3 });
+    expect(timeline[2].rationalOffset).toEqual({ numerator: 2, denominator: 3 });
+    expect(timeline[3].rationalOffset).toEqual({ numerator: 1, denominator: 1 });
   });
 });
 

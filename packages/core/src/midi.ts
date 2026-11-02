@@ -79,14 +79,14 @@ export function compileToMidi(ast: MadalProgramAST): Uint8Array {
 
   // 4. Schedule note events for Bhale and Pothi heads
   for (const event of timeline) {
-    const startTick = Math.round(event.beatOffset * TICKS_PER_BEAT);
+    const startTick = Math.round(
+      (event.rationalOffset.numerator * TICKS_PER_BEAT) / event.rationalOffset.denominator
+    );
+    const exactDurationTicks =
+      (event.rationalDuration.numerator * TICKS_PER_BEAT) / event.rationalDuration.denominator;
     const gateDurationTicks = Math.max(
       40,
-      Math.round(
-        event.durationBeats *
-          TICKS_PER_BEAT *
-          (event.token.modifiers.damped ? 0.25 : 0.8)
-      )
+      Math.round(exactDurationTicks * (event.token.modifiers.damped ? 0.25 : 0.8))
     );
 
     // Optional grace bol slightly before main beat (or at startTick if 0)

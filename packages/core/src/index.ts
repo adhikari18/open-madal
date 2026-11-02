@@ -1,4 +1,5 @@
 export * from './types.js';
+export * from './rational.js';
 export * from './bols.js';
 export * from './parser.js';
 export * from './validator.js';

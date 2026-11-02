@@ -69,6 +69,15 @@ export interface StrokeModifiers {
   graceBol?: CanonicalBolId;
 }
 
+/**
+ * Exact rational number representation (numerator / denominator) in lowest terms
+ * to represent arbitrary-depth tuplet beat subdivisions without floating-point drift.
+ */
+export interface RationalFraction {
+  numerator: number;
+  denominator: number;
+}
+
 export interface BolTokenNode {
   type: 'BolToken';
   /** Canonical bol identifier */
@@ -83,6 +92,10 @@ export interface BolTokenNode {
   pothi?: HeadStrokeSpec;
   /** Relative duration weight inside a beat (e.g., 1 for whole beat, 0.5 for [Ti Ta]) */
   durationFractions: number;
+  /** Exact rational duration inside a beat (e.g., { numerator: 1, denominator: 6 } for sextuplets) */
+  rationalDuration: RationalFraction;
+  /** Nesting depth of bracketed subdivisions (0 for whole beat, 1 for [Ti Ta], 2 for [Ti [Ra Ki] Ta]) */
+  tupletDepth?: number;
   /** Source location */
   line: number;
   column: number;
@@ -150,6 +163,10 @@ export interface FlattenedTimelineEvent {
   beatOffset: number;
   /** Duration in beats */
   durationBeats: number;
+  /** Exact rational beat offset from start of pattern */
+  rationalOffset: RationalFraction;
+  /** Exact rational duration in beats */
+  rationalDuration: RationalFraction;
   /** Absolute time in seconds based on document tempo */
   timeSeconds: number;
   /** Duration in seconds */
