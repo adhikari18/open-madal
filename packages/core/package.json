@@ -1,0 +1,20 @@
+{
+  "name": "@open-madal/core",
+  "version": "0.1.0",
+  "description": "Core MadalCode DSL parser, dual-drumhead AST engine, MIDI compiler, and SVG tablature renderer for the Nepali Madal.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}
+

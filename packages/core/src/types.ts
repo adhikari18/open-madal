@@ -1,0 +1,172 @@
+/**
+ * Core AST and domain types for MadalCode v0.1.0
+ */
+
+export type DrumHead = 'bhale' | 'pothi' | 'both' | 'none';
+
+export type StrokeArticulation =
+  | 'open'        // Khula (open resonant ring on khari)
+  | 'closed'      // Bandha / muted slap (Ka, Ki)
+  | 'rim'         // Kinara / edge strike (Ta, Na)
+  | 'pitch-bend'  // Heel pressure pitch-slide on Bhale (Dhing / Ghe^)
+  | 'rest'        // Silence (-)
+  | 'sustain';    // Let previous stroke ring (~)
+
+export type CanonicalBolId =
+  | 'Ghe'
+  | 'Ga'
+  | 'Dhum'
+  | 'Ka'
+  | 'Ki'
+  | 'Ta'
+  | 'Ti'
+  | 'Tin'
+  | 'Na'
+  | 'Dha'
+  | 'Dhin'
+  | 'Dhing'
+  | '-'
+  | '~';
+
+export interface HeadStrokeSpec {
+  /** Which head is struck */
+  head: 'bhale' | 'pothi';
+  /** Individual stroke name on that head */
+  stroke: string;
+  /** Articulation style */
+  articulation: StrokeArticulation;
+  /** General MIDI Percussion note number */
+  midiNote: number;
+  /** Fundamental frequency in Hz for synthesis */
+  fundamentalHz: number;
+  /** Decay duration in seconds */
+  decaySec: number;
+}
+
+export interface BolDefinition {
+  id: CanonicalBolId;
+  roman: string;
+  devanagari: string;
+  head: DrumHead;
+  articulation: StrokeArticulation;
+  description: string;
+  /** Decomposition onto Bhale (left bass head) if active */
+  bhale?: HeadStrokeSpec;
+  /** Decomposition onto Pothi (right treble head) if active */
+  pothi?: HeadStrokeSpec;
+  /** Default MIDI velocity (1-127) */
+  defaultVelocity: number;
+}
+
+export interface StrokeModifiers {
+  /** Dynamic accent (>Dha) */
+  accent?: boolean;
+  /** Heel pressure pitch bend up (Ghe^) */
+  pitchBend?: boolean;
+  /** Damped / choked immediately after strike (Ghe.) */
+  damped?: boolean;
+  /** Optional grace bol preceding main stroke, e.g. (Ka)Dha */
+  graceBol?: CanonicalBolId;
+}
+
+export interface BolTokenNode {
+  type: 'BolToken';
+  /** Canonical bol identifier */
+  bol: CanonicalBolId;
+  /** Raw token text from source */
+  raw: string;
+  /** Expressive modifiers */
+  modifiers: StrokeModifiers;
+  /** Decomposed Bhale stroke (if this bol activates the left bass head) */
+  bhale?: HeadStrokeSpec;
+  /** Decomposed Pothi stroke (if this bol activates the right treble head) */
+  pothi?: HeadStrokeSpec;
+  /** Relative duration weight inside a beat (e.g., 1 for whole beat, 0.5 for [Ti Ta]) */
+  durationFractions: number;
+  /** Source location */
+  line: number;
+  column: number;
+}
+
+export interface BeatCellNode {
+  type: 'BeatCell';
+  /** Beat index within the bar (1-based) */
+  beatNumber: number;
+  /** Sub-strokes inside this beat (1 for simple beat, 2+ for bracketed subdivisions like [Ti Ta]) */
+  subdivisions: BolTokenNode[];
+  /** Marker for Sam (X), Tali (1, 2...), or Khali (0) */
+  vibhagMarker?: 'sam' | 'tali' | 'khali';
+}
+
+export interface BarNode {
+  type: 'Bar';
+  barNumber: number;
+  beats: BeatCellNode[];
+  /** Optional repeat multiplier (e.g., | Dha - Ti Ta | x2) */
+  repeat: number;
+  line: number;
+}
+
+export interface SectionNode {
+  type: 'Section';
+  name: string;
+  bars: BarNode[];
+}
+
+export interface TimeSignature {
+  beatsPerBar: number;
+  beatUnit: number;
+}
+
+export interface MadalDocumentMetadata {
+  title: string;
+  taal: string;
+  tempo: number;
+  meter: TimeSignature;
+  region?: string;
+  composer?: string;
+  /** 1-based beat numbers that carry a Tali (clap), Beat 1 is always Sam */
+  taliBeats: number[];
+  /** 1-based beat numbers that carry a Khali (open wave) */
+  khaliBeats: number[];
+}
+
+export interface ParseDiagnostic {
+  severity: 'error' | 'warning';
+  message: string;
+  line: number;
+  column: number;
+}
+
+export interface MadalProgramAST {
+  type: 'MadalProgram';
+  metadata: MadalDocumentMetadata;
+  sections: SectionNode[];
+  diagnostics: ParseDiagnostic[];
+}
+
+export interface FlattenedTimelineEvent {
+  /** Absolute time in beats (0-based from start of pattern) */
+  beatOffset: number;
+  /** Duration in beats */
+  durationBeats: number;
+  /** Absolute time in seconds based on document tempo */
+  timeSeconds: number;
+  /** Duration in seconds */
+  durationSeconds: number;
+  /** 1-based bar index */
+  barIndex: number;
+  /** 1-based beat index within bar */
+  beatInBar: number;
+  /** 0-based subdivision index within beat */
+  subdivisionIndex: number;
+  /** Total subdivisions in this beat */
+  totalSubdivisions: number;
+  /** Section name */
+  sectionName: string;
+  /** Underlying Bol token */
+  token: BolTokenNode;
+  /** Velocity (1-127) */
+  velocity: number;
+}
+
