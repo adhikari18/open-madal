@@ -158,6 +158,37 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     pothi: POTHI_RING,
     defaultVelocity: 100,
   },
+  Ra: {
+    id: 'Ra',
+    roman: 'Ra',
+    devanagari: 'र',
+    head: 'pothi',
+    articulation: 'closed',
+    description: 'Rapid finger-rebound stroke on the Pothi head used in Tirakita ornamental rolls.',
+    pothi: { ...POTHI_CLOSED, stroke: 'Ra', fundamentalHz: 385, decaySec: 0.09 },
+    defaultVelocity: 88,
+  },
+  Di: {
+    id: 'Di',
+    roman: 'Di',
+    devanagari: 'दि',
+    head: 'both',
+    articulation: 'open',
+    description: 'Rapid alternating roll lead stroke combining Bhale and Pothi open resonance (Diri-Diri).',
+    bhale: { ...BHALE_OPEN, stroke: 'Di', decaySec: 0.22 },
+    pothi: { ...POTHI_OPEN, stroke: 'Di', decaySec: 0.22 },
+    defaultVelocity: 98,
+  },
+  Ri: {
+    id: 'Ri',
+    roman: 'Ri',
+    devanagari: 'रि',
+    head: 'pothi',
+    articulation: 'rim',
+    description: 'Crisp Pothi rebound stroke paired with Di in rapid Diri-Diri rolls.',
+    pothi: { ...POTHI_RIM, stroke: 'Ri', fundamentalHz: 355, decaySec: 0.14 },
+    defaultVelocity: 90,
+  },
   Dha: {
     id: 'Dha',
     roman: 'Dha',
@@ -230,6 +261,72 @@ export const REGIONAL_BOL_ALIASES: Record<string, CanonicalBolId> = {
   dhi: 'Dhin',
   dhang: 'Dha',
 };
+
+/**
+ * Compound ornamental roll shorthands that expand into multi-stroke sub-beat subdivisions.
+ */
+export const ORNAMENTAL_ROLL_SHORTHANDS: Record<string, CanonicalBolId[]> = {
+  tirakita: ['Ti', 'Ra', 'Ki', 'Ta'],
+  'ti-ra-ki-ta': ['Ti', 'Ra', 'Ki', 'Ta'],
+  tirkit: ['Ti', 'Ra', 'Ki', 'Ta'],
+  diridiri: ['Di', 'Ri', 'Di', 'Ri'],
+  'diri-diri': ['Di', 'Ri', 'Di', 'Ri'],
+  diri: ['Di', 'Ri'],
+  'di-ri': ['Di', 'Ri'],
+  tira: ['Ti', 'Ra'],
+  'ti-ra': ['Ti', 'Ra'],
+  kita: ['Ki', 'Ta'],
+  'ki-ta': ['Ki', 'Ta'],
+};
+
+/**
+ * Check whether a raw token represents a compound ornamental roll (such as `Tirakita`,
+ * `Diri-Diri`, or hyphenated roll sequences like `Ti-Ra-Ki-Ta`) and expand it into
+ * constituent bol token strings while preserving prefix/suffix modifiers.
+ */
+export function expandOrnamentalRoll(rawToken: string): string[] | null {
+  let working = rawToken.trim();
+  if (!working || working === '-' || working === '~') return null;
+
+  let prefix = '';
+  let changedPrefix = true;
+  while (changedPrefix) {
+    changedPrefix = false;
+    if (working.startsWith('>')) {
+      prefix += '>';
+      working = working.slice(1);
+      changedPrefix = true;
+    }
+    const graceMatch = working.match(/^\(([A-Za-z]+)\)(.+)$/);
+    if (graceMatch) {
+      prefix += `(${graceMatch[1]})`;
+      working = graceMatch[2];
+      changedPrefix = true;
+    }
+  }
+
+  let suffix = '';
+  while (working.endsWith('^') || working.endsWith('.')) {
+    suffix = working.slice(-1) + suffix;
+    working = working.slice(0, -1);
+  }
+
+  const lowerStem = working.toLowerCase();
+  const shorthand = ORNAMENTAL_ROLL_SHORTHANDS[lowerStem];
+  if (shorthand) {
+    return shorthand.map((bol, idx) => `${idx === 0 ? prefix : ''}${bol}${suffix}`);
+  }
+
+  // Also expand explicit hyphenated multi-bol rolls like Di-Ri-Di-Ri or Ta-Ki-Ta
+  if (working.includes('-')) {
+    const parts = working.split('-').filter(Boolean);
+    if (parts.length >= 2 && parts.every((p) => resolveBol(p) !== undefined)) {
+      return parts.map((part, idx) => `${idx === 0 ? prefix : ''}${part}${suffix}`);
+    }
+  }
+
+  return null;
+}
 
 /**
  * Look up a canonical Bol definition case-insensitively, including regional oral aliases.

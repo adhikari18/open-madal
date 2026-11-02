@@ -1,4 +1,4 @@
-import { resolveBol } from './bols.js';
+import { expandOrnamentalRoll, resolveBol } from './bols.js';
 import { addRational, createRational, divideRationalByInt, rationalToNumber } from './rational.js';
 import {
   BarNode,
@@ -97,7 +97,7 @@ export function parseBolToken(
   if (!bolDef) {
     diagnostics.push({
       severity: 'error',
-      message: `Unrecognized Madal bol "${rawToken}". Expected Ghe, Ka, Ta, Ti, Tin, Na, Dha, Dhin, Dhing, -, or ~.`,
+      message: `Unrecognized Madal bol "${rawToken}". Expected Ghe, Ka, Ta, Ti, Tin, Na, Ra, Di, Ri, Dha, Dhin, Dhing, Tirakita, Diri-Diri, -, or ~.`,
       line,
       column,
     });
@@ -239,6 +239,48 @@ function splitSubdivisionItems(
 }
 
 /**
+ * Parse a single token or expand an ornamental roll shorthand (such as `Tirakita` or `Diri-Diri`)
+ * into multiple equal sub-strokes within `slotDuration`.
+ */
+function parseTokenOrOrnamentalRoll(
+  rawToken: string,
+  lineNum: number,
+  col: number,
+  slotDuration: RationalFraction,
+  depth: number,
+  diagnostics: ParseDiagnostic[]
+): BolTokenNode[] {
+  const rollParts = expandOrnamentalRoll(rawToken);
+  if (rollParts && rollParts.length > 1) {
+    const subDuration = divideRationalByInt(slotDuration, rollParts.length);
+    const subFraction = rationalToNumber(subDuration);
+    return rollParts.map((part, idx) =>
+      parseBolToken(
+        part,
+        subFraction,
+        lineNum,
+        col + idx,
+        diagnostics,
+        subDuration,
+        depth + 1
+      )
+    );
+  }
+
+  return [
+    parseBolToken(
+      rawToken,
+      rationalToNumber(slotDuration),
+      lineNum,
+      col,
+      diagnostics,
+      slotDuration,
+      depth
+    ),
+  ];
+}
+
+/**
  * Recursively expand a bracketed subdivision group into flat leaf BolTokenNodes
  * with exact rational beat fractions and nesting depth tracking.
  */
@@ -273,20 +315,18 @@ function expandSubdivisionGroup(
   }
 
   const childDuration = divideRationalByInt(parentDuration, items.length);
-  const childFraction = rationalToNumber(childDuration);
   const result: BolTokenNode[] = [];
 
   for (const item of items) {
     if (item.kind === 'token') {
       result.push(
-        parseBolToken(
+        ...parseTokenOrOrnamentalRoll(
           item.text,
-          childFraction,
           lineNum,
           item.col,
-          diagnostics,
           childDuration,
-          depth
+          depth,
+          diagnostics
         )
       );
     } else {
@@ -308,7 +348,8 @@ function expandSubdivisionGroup(
 
 /**
  * Parse a bar segment's content into BeatCellNodes.
- * Supports single tokens (`Dha`, `-`, `Ti`) and arbitrary-depth bracketed tuplets (`[Ti Ta]`, `[Ti [Ra Ki] Ta]`).
+ * Supports single tokens (`Dha`, `-`, `Ti`), ornamental rolls (`Tirakita`, `Diri-Diri`),
+ * and arbitrary-depth bracketed tuplets (`[Ti Ta]`, `[Ti [Ra Ki] Ta]`).
  */
 function parseBarCells(
   barContent: string,
@@ -341,9 +382,14 @@ function parseBarCells(
         diagnostics
       );
     } else {
-      subdivisions = [
-        parseBolToken(item.text, 1, lineNum, item.col, diagnostics, wholeBeat, 0),
-      ];
+      subdivisions = parseTokenOrOrnamentalRoll(
+        item.text,
+        lineNum,
+        item.col,
+        wholeBeat,
+        0,
+        diagnostics
+      );
     }
 
     let vibhagMarker: 'sam' | 'tali' | 'khali' | undefined;

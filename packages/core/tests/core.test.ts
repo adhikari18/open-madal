@@ -200,5 +200,47 @@ describe('@open-madal/core parser & AST', () => {
     const malformed = parseMadalCode('| [Ti [Ka Ki] Dha |');
     expect(malformed.diagnostics.some((d) => d.message.includes('Unclosed subdivision bracket'))).toBe(true);
   });
+
+  it('expands ornamental rolls (Tirakita, Diri-Diri, [Ti [Ra Ki] Ta]) with exact rational subdivisions', () => {
+    const src = `
+@meter: 4/4
+| [Ti [Ra Ki] Ta] >Tirakita Diri-Diri [Dha Tirakita] |
+`;
+    const ast = parseMadalCode(src);
+    expect(ast.diagnostics).toHaveLength(0);
+    const beats = ast.sections[0].bars[0].beats;
+    expect(beats).toHaveLength(4);
+
+    // Beat 1: [Ti [Ra Ki] Ta] -> 1/3, 1/6, 1/6, 1/3
+    expect(beats[0].subdivisions.map((s) => s.bol)).toEqual(['Ti', 'Ra', 'Ki', 'Ta']);
+    expect(beats[0].subdivisions.map((s) => s.rationalDuration)).toEqual([
+      { numerator: 1, denominator: 3 },
+      { numerator: 1, denominator: 6 },
+      { numerator: 1, denominator: 6 },
+      { numerator: 1, denominator: 3 },
+    ]);
+
+    // Beat 2: >Tirakita -> 4 quarter-beat roll strokes (1/4 each), accent on first stroke
+    expect(beats[1].subdivisions.map((s) => s.bol)).toEqual(['Ti', 'Ra', 'Ki', 'Ta']);
+    expect(beats[1].subdivisions[0].modifiers.accent).toBe(true);
+    expect(beats[1].subdivisions[1].modifiers.accent).toBeUndefined();
+    expect(beats[1].subdivisions.every((s) => s.rationalDuration.numerator === 1 && s.rationalDuration.denominator === 4)).toBe(true);
+
+    // Beat 3: Diri-Diri -> 4 alternating roll strokes (Di, Ri, Di, Ri) at 1/4 beat each
+    expect(beats[2].subdivisions.map((s) => s.bol)).toEqual(['Di', 'Ri', 'Di', 'Ri']);
+    expect(beats[2].subdivisions[0].bhale?.stroke).toBe('Di');
+    expect(beats[2].subdivisions[0].pothi?.stroke).toBe('Di');
+    expect(beats[2].subdivisions[1].pothi?.stroke).toBe('Ri');
+
+    // Beat 4: [Dha Tirakita] -> Dha (1/2) + Ti, Ra, Ki, Ta (1/8 each)
+    expect(beats[3].subdivisions.map((s) => s.bol)).toEqual(['Dha', 'Ti', 'Ra', 'Ki', 'Ta']);
+    expect(beats[3].subdivisions.map((s) => s.rationalDuration)).toEqual([
+      { numerator: 1, denominator: 2 },
+      { numerator: 1, denominator: 8 },
+      { numerator: 1, denominator: 8 },
+      { numerator: 1, denominator: 8 },
+      { numerator: 1, denominator: 8 },
+    ]);
+  });
 });
 
