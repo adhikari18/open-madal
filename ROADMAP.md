@@ -6,7 +6,7 @@ This document outlines the multi-milestone engineering roadmap for `open-madal` 
 
 ## Milestone 1: `MadalCode` v0.2 Compiler, Grammar & Expressive AST (~18 hrs)
 
-- [ ] **1.1 Nested Tuplets & Ornamental Rolls (`Tirakita` / `Diri-Diri`) (~4 hrs):**
+- [x] **1.1 Nested Tuplets & Ornamental Rolls (`Tirakita` / `Diri-Diri`) (~4 hrs):**
   - Support arbitrary-depth bracketed subdivisions (`[Ti [Ra Ki] Ta]`, triplets, sextuplets) with exact rational-number beat fractions in the AST.
 - [ ] **1.2 Continuous Pitch-Bend & Heel-Slide Automation (`Ghe^` / `Dhing`) (~4 hrs):**
   - Emit 14-bit MIDI Pitch Wheel (`0xE0`) and Control Change envelopes alongside note events so external DAW samplers reproduce palm-heel pressure pitch bends on the *Bhale* head.

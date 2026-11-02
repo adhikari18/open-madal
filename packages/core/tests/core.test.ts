@@ -241,6 +241,14 @@ describe('@open-madal/core parser & AST', () => {
       { numerator: 1, denominator: 8 },
       { numerator: 1, denominator: 8 },
     ]);
+
+    // Verify proportional SVG tablature rendering for nested tuplets and rolls
+    const svg = renderLinearTabSVG(ast, { script: 'roman' });
+    expect(svg).toContain('>Ra<');
+    expect(svg).toContain('>Di<');
+    expect(svg).toContain('>Ri<');
+    const clockSvg = renderRadialClockSVG(ast, { script: 'roman' });
+    expect(clockSvg).toContain('[Ti Ra Ki Ta]');
   });
 });
 

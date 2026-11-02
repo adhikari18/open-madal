@@ -48,7 +48,6 @@ export function renderLinearTabSVG(
   const pothiColor = '#14b8a6'; // Bright Himalayan teal for Pothi treble
   const samColor = '#eab308';   // Gold for Sam (Beat 1)
 
-  const cellWidth = 96;
   const leftGutter = 120;
   const rightPadding = 36;
   const barHeight = 148;
@@ -56,6 +55,7 @@ export function renderLinearTabSVG(
 
   // Flatten bars across sections for visual layout
   const allBars: { sectionName: string; barNumber: number; repeat: number; beats: BeatCellNode[] }[] = [];
+  let minSubFraction = 1;
   for (const section of ast.sections) {
     for (const bar of section.bars) {
       allBars.push({
@@ -64,8 +64,18 @@ export function renderLinearTabSVG(
         repeat: bar.repeat,
         beats: bar.beats,
       });
+      for (const beat of bar.beats) {
+        for (const sub of beat.subdivisions) {
+          if (sub.durationFractions > 0 && sub.durationFractions < minSubFraction) {
+            minSubFraction = sub.durationFractions;
+          }
+        }
+      }
     }
   }
+
+  // Scale beat cell width automatically when dense tuplets or rolls (e.g., 1/6, 1/8) are present
+  const cellWidth = Math.max(96, Math.min(180, Math.ceil(24 / minSubFraction)));
 
   const maxBeatsInBar = Math.max(
     ast.metadata.meter.beatsPerBar,
@@ -164,19 +174,49 @@ export function renderLinearTabSVG(
         } ${escapeXml(vibhagSymbol)}</text>`
       );
 
-      // Subdivisions within this beat
+      // Subdivisions within this beat positioned proportionally by rational durationFractions
       const subCount = beat.subdivisions.length;
-      const subWidth = cellWidth / subCount;
+      if (subCount > 1) {
+        // Primary tuplet beam spanning the beat cell
+        lines.push(
+          `<line x1="${(colX + 6).toFixed(1)}" y1="${topY + 44}" x2="${(
+            colX +
+            cellWidth -
+            6
+          ).toFixed(1)}" y2="${topY + 44}" stroke="${textMuted}" stroke-width="1.5" stroke-opacity="0.6" />`
+        );
+      }
 
-      beat.subdivisions.forEach((sub, subIdx) => {
-        const subCenterX = colX + subIdx * subWidth + subWidth / 2;
+      let cumulativeFraction = 0;
+      beat.subdivisions.forEach((sub) => {
+        const frac =
+          sub.durationFractions > 0 ? sub.durationFractions : 1 / Math.max(1, subCount);
+        const subStartX = colX + cumulativeFraction * cellWidth;
+        const subWidth = frac * cellWidth;
+        const subCenterX = Number((subStartX + subWidth / 2).toFixed(2));
+        cumulativeFraction += frac;
+
+        // Secondary beam for nested tuplets (depth >= 2)
+        if ((sub.tupletDepth ?? 0) >= 2) {
+          lines.push(
+            `<line x1="${(subStartX + 2).toFixed(1)}" y1="${topY + 47}" x2="${(
+              subStartX +
+              subWidth -
+              2
+            ).toFixed(1)}" y2="${topY + 47}" stroke="${samColor}" stroke-width="1.5" stroke-opacity="0.75" />`
+          );
+        }
+
         const label = formatBolLabel(sub, script);
+        const bolFontSize = subWidth < 26 ? 10 : subWidth < 36 ? 11 : 13;
+        const nodeRadius = subWidth < 26 ? 8 : 11;
+        const nodeFontSize = subWidth < 26 ? 8 : 10;
 
         // Mnemonic Bol label
         lines.push(
           `<text x="${subCenterX}" y="${
             topY + 62
-          }" text-anchor="middle" fill="${textPrimary}" font-size="13" font-weight="700">${escapeXml(
+          }" text-anchor="middle" fill="${textPrimary}" font-size="${bolFontSize}" font-weight="700">${escapeXml(
             label
           )}</text>`
         );
@@ -186,12 +226,12 @@ export function renderLinearTabSVG(
           lines.push(
             `<circle cx="${subCenterX}" cy="${
               topY + 91
-            }" r="11" fill="${pothiColor}" fill-opacity="0.2" stroke="${pothiColor}" stroke-width="2" />`
+            }" r="${nodeRadius}" fill="${pothiColor}" fill-opacity="0.2" stroke="${pothiColor}" stroke-width="2" />`
           );
           lines.push(
             `<text x="${subCenterX}" y="${
               topY + 95
-            }" text-anchor="middle" fill="${pothiColor}" font-size="10" font-weight="700">${escapeXml(
+            }" text-anchor="middle" fill="${pothiColor}" font-size="${nodeFontSize}" font-weight="700">${escapeXml(
               sub.pothi.stroke
             )}</text>`
           );
@@ -202,12 +242,12 @@ export function renderLinearTabSVG(
           lines.push(
             `<circle cx="${subCenterX}" cy="${
               topY + 124
-            }" r="11" fill="${bhaleColor}" fill-opacity="0.2" stroke="${bhaleColor}" stroke-width="2" />`
+            }" r="${nodeRadius}" fill="${bhaleColor}" fill-opacity="0.2" stroke="${bhaleColor}" stroke-width="2" />`
           );
           lines.push(
             `<text x="${subCenterX}" y="${
               topY + 128
-            }" text-anchor="middle" fill="${bhaleColor}" font-size="10" font-weight="700">${escapeXml(
+            }" text-anchor="middle" fill="${bhaleColor}" font-size="${nodeFontSize}" font-weight="700">${escapeXml(
               sub.bhale.stroke
             )}</text>`
           );
@@ -319,7 +359,12 @@ export function renderRadialClockSVG(
     }
 
     // Outer label
-    const label = primarySub ? formatBolLabel(primarySub, script) : '-';
+    const label =
+      beat.subdivisions.length > 1
+        ? `[${beat.subdivisions.map((s) => formatBolLabel(s, script)).join(' ')}]`
+        : primarySub
+        ? formatBolLabel(primarySub, script)
+        : '-';
     const labelColor = idx === 0 ? '#eab308' : '#e2e8f0';
     lines.push(
       `<text x="${lx.toFixed(1)}" y="${(ly + 4).toFixed(
