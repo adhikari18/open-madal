@@ -1,0 +1,18 @@
+{
+  "name": "@open-madal/cli",
+  "version": "0.1.0",
+  "description": "Command-line compiler, validator, and Taal explorer for MadalCode (.madal) files.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "madal": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@open-madal/core": "0.1.0"
+  }
+}
+
