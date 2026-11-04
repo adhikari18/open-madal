@@ -183,6 +183,70 @@ describe('@open-madal/core parser & AST', () => {
     ]);
   });
 
+  it('compiles Tamang Selo, Samala, Maruni, Sangini, and Chudka/Kauda presets with authentic physical strokes', () => {
+    // 1. Tamang Selo (4/4): | >Ghin - Taak Ghin |
+    const selo = parseMadalCode(TAAL_PRESETS.find((p) => p.id === 'tamang-selo')!.source);
+    expect(selo.metadata.meter).toEqual({ beatsPerBar: 4, beatUnit: 4 });
+    expect(selo.sections[0].bars[0].beats.map((b) => b.subdivisions[0].bol)).toEqual([
+      'Ghe',
+      '-',
+      'Ki',
+      'Ghe',
+    ]);
+
+    // 2. Samala (4/4): | >Ghin [Kha Taang] [Taak Ghin] [Ghin Taang] |
+    const samala = parseMadalCode(TAAL_PRESETS.find((p) => p.id === 'samala')!.source);
+    expect(samala.metadata.meter).toEqual({ beatsPerBar: 4, beatUnit: 4 });
+    expect(samala.sections[0].bars[0].beats.map((b) => b.subdivisions.map((s) => s.bol))).toEqual([
+      ['Ghe'],
+      ['Ka', 'Tin'],
+      ['Ki', 'Ghe'],
+      ['Ghe', 'Tin'],
+    ]);
+
+    // 3. Maruni (4/4): | >Taang [Kha Taang] [Taang Ghin] [Ghin Taang] |
+    const maruni = parseMadalCode(TAAL_PRESETS.find((p) => p.id === 'maruni')!.source);
+    expect(maruni.metadata.meter).toEqual({ beatsPerBar: 4, beatUnit: 4 });
+    expect(maruni.sections[0].bars[0].beats.map((b) => b.subdivisions.map((s) => s.bol))).toEqual([
+      ['Tin'],
+      ['Ka', 'Tin'],
+      ['Tin', 'Ghe'],
+      ['Ghe', 'Tin'],
+    ]);
+
+    // 4. Sangini (6/8): | >Ghin Ghin Taang : Taak Ghin Taang |
+    const sangini = parseMadalCode(TAAL_PRESETS.find((p) => p.id === 'sangini')!.source);
+    expect(sangini.metadata.meter).toEqual({ beatsPerBar: 6, beatUnit: 8 });
+    expect(sangini.sections[0].bars[0].beats.map((b) => b.subdivisions[0].bol)).toEqual([
+      'Ghe',
+      'Ghe',
+      'Tin',
+      'Ki',
+      'Ghe',
+      'Tin',
+    ]);
+
+    // 5. Chudka / Kauda (6/8): Theka | >Ghin Ghin Taang : Kha Ghin Taang | & Drut | >Taak Ghin Taang : Taak Ghin Taang |
+    const chudka = parseMadalCode(TAAL_PRESETS.find((p) => p.id === 'dadra-chudka')!.source);
+    expect(chudka.metadata.meter).toEqual({ beatsPerBar: 6, beatUnit: 8 });
+    expect(chudka.sections[0].bars[0].beats.map((b) => b.subdivisions[0].bol)).toEqual([
+      'Ghe',
+      'Ghe',
+      'Tin',
+      'Ka',
+      'Ghe',
+      'Tin',
+    ]);
+    expect(chudka.sections[1].bars[0].beats.map((b) => b.subdivisions[0].bol)).toEqual([
+      'Ki',
+      'Ghe',
+      'Tin',
+      'Ki',
+      'Ghe',
+      'Tin',
+    ]);
+  });
+
   it('normalizes regional oral dialect aliases (Ge -> Ghe, Tang -> Tin, Kat -> Ka) into canonical dual-head AST nodes', () => {
     const src = `
 @meter: 4/4

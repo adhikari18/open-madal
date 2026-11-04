@@ -1,15 +1,28 @@
-# Chudka / Kauda Dance Taal (6/8) — Gandaki Heartland
-@title: Chudka Kauda Fast Cycle
+# Traditional Chudka / Kauda Taal (6/8)
+# Spoken rhyme (6 matras): १:घिं  २:घि  ३:ना  :  ४:खत्  ५:घि  ६:ना
+# Physical strokes:        १:घिं  २:घिं  ३:तां  :  ४:ख   ५:घिं  ६:तां
+# Drut (Fast) Chudka:      १:तक्  २:घिं  ३:तां  :  ४:तक्  ५:घिं  ६:तां  (spoken: ताक घिना ताक घिना)
+# Uthaan (उठान): घिं घिं तां : घिं घिं तां | तक् धां तक् : धां घिं तां
+# Kaat (काट):   तां घिं तां : घिं तां X
+@title: Traditional Chudka / Kauda Taal
 @taal: Chudka
 @tempo: 148
 @meter: 6/8
-@region: Gandaki Heartland, Nepal
-@tali: 1, 4
-@khali: 3
+@region: Gandaki Heartland, Nepal (Kauda, Chudka & Roila Bhajan)
+@tali: 1
+@khali: 4
 
 [Theka]
-| >Dha [Ti Ta] Ka : >Dhin >Ta - | x2
+| >Ghin Ghin Taang : Kha Ghin Taang | x4
 
-[Fast Roll]
-| >Dha [Ti Ta] [Ki Ta] : >Dhing >Ta Ghe |
+[Drut Chudka]
+| >Taak Ghin Taang : Taak Ghin Taang | x4
 
+[Uthaan]
+| >Ghin Ghin Taang : Ghin Ghin Taang |
+| >Taak Dhang Taak : Dhang Ghin Taang |
+| >Taak Dhang Dhang : Taak Dhang Dhang |
+
+[Kaat]
+| >Taang Ghin Taang : Ghin Taang - |
+| >Ghin Ghin Ghin : Ghin Taang - |

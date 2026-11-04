@@ -1,10 +1,24 @@
-# Sangini Taal (6 counts)
-@title: Sangini Taal
+# Traditional Sangini Taal (6/8)
+# 6 Matras, 2 Vibhags (3+3), 1 Tali (Beat 1), 1 Khali (Beat 4)
+# Spoken rhyme: १:घिं  २:घिं  ३:ताङ  :  ४:नकी  ५:घिं  ६:ताङ
+# Physical strokes: १:घिं  २:घिं  ३:तां  :  ४:तक्  ५:घिं  ६:तां
+# Kaat (काट): १:[घिं घिं]  २:[X घिं]  ३:[तां घिं]  :  ४:तां  ५:घिं  ६:तां
+@title: Traditional Sangini Taal
 @taal: Sangini
 @tempo: 120
 @meter: 6/8
-@region: Nepal
-@tali: 1, 4
+@region: Nepal (Sangini Songs, Deuda & Folk Dance)
+@tali: 1
+@khali: 4
 
 [Theka]
 | >Ghin Ghin Taang : Taak Ghin Taang | x4
+
+[Prakar]
+| >Ghin Taang Taang : Taak Ghin Taang | x2
+| >Ghin Ghin Taang : Ghin Taang - | x2
+| >Ghin Taang Taang : Taak Taang Taang | x2
+
+[Kaat]
+| [>Ghin Ghin] [- Ghin] [Taang Ghin] : Taang Ghin Taang |
+| >Taang Ghin Taang : Ghin Taang - |
