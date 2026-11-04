@@ -27,7 +27,7 @@ Today, **there is no formal digital or machine-readable standard for Madal notat
 2. **`@open-madal/cli` (`madal` CLI):**
    A command-line compiler and validator to convert `.madal` text files into `.mid` files for DAWs (Ableton, Logic, Reaper, FL Studio) and print-ready `.svg` sheet music in both **Romanized** and **Devanagari** (`घे, का, ता, ति, धा`) scripts.
 3. **`@open-madal/web` (Interactive Web Sequencer & Modal Synthesizer):**
-   A Next.js + Tailwind CSS studio featuring a real-time **Web Audio API modal physical-modeling synthesizer** (modeling the harmonic partials of the *khari* spot and *Bhale* palm-heel pitch bends), a concentric radial *Taal* clock, and a live step sequencer.
+   A Next.js + Tailwind CSS studio that plays **real acoustic madal recordings** (CC0 one-shots of *Taang*, *Taak*, *Ghin* and *Kha*, mapped to every bol, with per-head damping and velocity dynamics). It falls back to a modal synthesizer calibrated from those recordings (see [`docs/madal-acoustics.md`](docs/madal-acoustics.md)). The studio also has a concentric radial *Taal* clock and a live step sequencer.
 
 ---
 
