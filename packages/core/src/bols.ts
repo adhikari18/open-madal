@@ -1,12 +1,18 @@
 import { BolDefinition, CanonicalBolId, HeadStrokeSpec } from './types.js';
 
+/*
+ * Pitches and ring lengths below were measured from real madal recordings
+ * (see docs/madal-acoustics.md): large (bass) head ~174 Hz, small (treble) head ~266 Hz,
+ * i.e. the two heads sit roughly a fifth apart. decaySec is the time an open stroke takes
+ * to fall ~40 dB, which the web engine uses as the audible ring length.
+ */
 const BHALE_OPEN: HeadStrokeSpec = {
   head: 'bhale',
   stroke: 'Ghe',
   articulation: 'open',
   midiNote: 60, // High Bongo / Low Conga / Bass Hand Drum mapping
-  fundamentalHz: 118,
-  decaySec: 0.42,
+  fundamentalHz: 174,
+  decaySec: 1.8,
 };
 
 const BHALE_BEND: HeadStrokeSpec = {
@@ -14,8 +20,8 @@ const BHALE_BEND: HeadStrokeSpec = {
   stroke: 'Ghe^',
   articulation: 'pitch-bend',
   midiNote: 61,
-  fundamentalHz: 128,
-  decaySec: 0.48,
+  fundamentalHz: 174,
+  decaySec: 1.8,
 };
 
 const BHALE_SLAP: HeadStrokeSpec = {
@@ -23,8 +29,8 @@ const BHALE_SLAP: HeadStrokeSpec = {
   stroke: 'Ka',
   articulation: 'closed',
   midiNote: 62,
-  fundamentalHz: 175,
-  decaySec: 0.09,
+  fundamentalHz: 177,
+  decaySec: 0.3,
 };
 
 const POTHI_RIM: HeadStrokeSpec = {
@@ -32,8 +38,8 @@ const POTHI_RIM: HeadStrokeSpec = {
   stroke: 'Ta',
   articulation: 'rim',
   midiNote: 63,
-  fundamentalHz: 340,
-  decaySec: 0.24,
+  fundamentalHz: 266,
+  decaySec: 1.0,
 };
 
 const POTHI_OPEN: HeadStrokeSpec = {
@@ -41,8 +47,8 @@ const POTHI_OPEN: HeadStrokeSpec = {
   stroke: 'Ti',
   articulation: 'open',
   midiNote: 64,
-  fundamentalHz: 295,
-  decaySec: 0.36,
+  fundamentalHz: 266,
+  decaySec: 0.45,
 };
 
 const POTHI_RING: HeadStrokeSpec = {
@@ -50,8 +56,8 @@ const POTHI_RING: HeadStrokeSpec = {
   stroke: 'Tin',
   articulation: 'open',
   midiNote: 65,
-  fundamentalHz: 320,
-  decaySec: 0.44,
+  fundamentalHz: 266,
+  decaySec: 1.15,
 };
 
 const POTHI_CLOSED: HeadStrokeSpec = {
@@ -59,8 +65,8 @@ const POTHI_CLOSED: HeadStrokeSpec = {
   stroke: 'Ki',
   articulation: 'closed',
   midiNote: 66,
-  fundamentalHz: 410,
-  decaySec: 0.08,
+  fundamentalHz: 267,
+  decaySec: 0.25,
 };
 
 /**
@@ -74,7 +80,8 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'घे',
     head: 'bhale',
     articulation: 'open',
-    description: 'Deep open resonant bass stroke on the larger Bhale head.',
+    description:
+      'Ghin (घिन): all four fingers together (no thumb) strike the large head and bounce off, leaving a deep open ring.',
     bhale: BHALE_OPEN,
     defaultVelocity: 105,
   },
@@ -84,8 +91,8 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'ग',
     head: 'bhale',
     articulation: 'open',
-    description: 'Lighter open bass stroke on the Bhale head.',
-    bhale: { ...BHALE_OPEN, stroke: 'Ga', decaySec: 0.32 },
+    description: 'Lighter, shorter open Ghin on the large head.',
+    bhale: { ...BHALE_OPEN, stroke: 'Ga', decaySec: 0.5 },
     defaultVelocity: 88,
   },
   Dhum: {
@@ -94,8 +101,8 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'धुम',
     head: 'bhale',
     articulation: 'open',
-    description: 'Full-hand booming open bass stroke on the Bhale head.',
-    bhale: { ...BHALE_OPEN, stroke: 'Dhum', fundamentalHz: 110, decaySec: 0.52 },
+    description: 'Full-strength open Ghin on the large head, allowed to ring out completely.',
+    bhale: { ...BHALE_OPEN, stroke: 'Dhum', fundamentalHz: 172, decaySec: 1.9 },
     defaultVelocity: 115,
   },
   Ka: {
@@ -104,7 +111,8 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'का',
     head: 'bhale',
     articulation: 'closed',
-    description: 'Flat palm muted slap on the Bhale (bass) head.',
+    description:
+      'Kha (ख): middle, ring and little fingers strike the khari of the large head and stay on the skin. Gives a muffled, closed bass.',
     bhale: BHALE_SLAP,
     defaultVelocity: 85,
   },
@@ -114,7 +122,8 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'कि',
     head: 'pothi',
     articulation: 'closed',
-    description: 'Crisp muted finger tap on the Pothi (treble) head.',
+    description:
+      'Taak (ताक): middle, ring and little fingers strike the khari of the small head and stay down. Gives a dry, closed treble.',
     pothi: POTHI_CLOSED,
     defaultVelocity: 82,
   },
@@ -124,7 +133,8 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'ता',
     head: 'pothi',
     articulation: 'rim',
-    description: 'Sharp rim/edge strike on the Pothi (treble) head.',
+    description:
+      'Taang (ताङ): the index finger strikes the small head and lifts off, leaving a bright open ring.',
     pothi: POTHI_RIM,
     defaultVelocity: 102,
   },
@@ -134,8 +144,9 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'ना',
     head: 'pothi',
     articulation: 'rim',
-    description: 'Lighter index-finger rim strike on the Pothi head.',
-    pothi: { ...POTHI_RIM, stroke: 'Na', decaySec: 0.2 },
+    description:
+      'Naa (ना): a lighter open stroke on the small head that sounds about three semitones above Taang.',
+    pothi: { ...POTHI_RIM, stroke: 'Na', fundamentalHz: 313, decaySec: 0.6 },
     defaultVelocity: 92,
   },
   Ti: {
@@ -144,7 +155,7 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'ति',
     head: 'pothi',
     articulation: 'open',
-    description: 'Open resonant finger strike on the Pothi center khari paste.',
+    description: 'Light, short open Taang on the small head (used inside fast phrases).',
     pothi: POTHI_OPEN,
     defaultVelocity: 96,
   },
@@ -154,7 +165,7 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'तिन',
     head: 'pothi',
     articulation: 'open',
-    description: 'Sustained harmonic ring on the Pothi khari spot.',
+    description: 'Open Taang on the small head, allowed to ring out fully.',
     pothi: POTHI_RING,
     defaultVelocity: 100,
   },
@@ -165,7 +176,7 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     head: 'pothi',
     articulation: 'closed',
     description: 'Rapid finger-rebound stroke on the Pothi head used in Tirakita ornamental rolls.',
-    pothi: { ...POTHI_CLOSED, stroke: 'Ra', fundamentalHz: 385, decaySec: 0.09 },
+    pothi: { ...POTHI_CLOSED, stroke: 'Ra', fundamentalHz: 275, decaySec: 0.12 },
     defaultVelocity: 88,
   },
   Di: {
@@ -175,7 +186,7 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     head: 'both',
     articulation: 'open',
     description: 'Rapid alternating roll lead stroke combining Bhale and Pothi open resonance (Diri-Diri).',
-    bhale: { ...BHALE_OPEN, stroke: 'Di', decaySec: 0.22 },
+    bhale: { ...BHALE_OPEN, stroke: 'Di', decaySec: 0.25 },
     pothi: { ...POTHI_OPEN, stroke: 'Di', decaySec: 0.22 },
     defaultVelocity: 98,
   },
@@ -186,7 +197,7 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     head: 'pothi',
     articulation: 'rim',
     description: 'Crisp Pothi rebound stroke paired with Di in rapid Diri-Diri rolls.',
-    pothi: { ...POTHI_RIM, stroke: 'Ri', fundamentalHz: 355, decaySec: 0.14 },
+    pothi: { ...POTHI_RIM, stroke: 'Ri', fundamentalHz: 313, decaySec: 0.14 },
     defaultVelocity: 90,
   },
   Dha: {
@@ -195,7 +206,7 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'धा',
     head: 'both',
     articulation: 'open',
-    description: 'Compound stroke combining open Bhale (Ghe) + crisp Pothi (Ta).',
+    description: 'Dhang (धाङ): Ghin on the large head and Taang on the small head struck together.',
     bhale: BHALE_OPEN,
     pothi: POTHI_RIM,
     defaultVelocity: 115,
@@ -206,7 +217,7 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'धिन',
     head: 'both',
     articulation: 'open',
-    description: 'Compound resonant stroke combining open Bhale (Ghe) + ringing Pothi (Tin).',
+    description: 'Ghin on the large head with a fully ringing Taang on the small head.',
     bhale: BHALE_OPEN,
     pothi: POTHI_RING,
     defaultVelocity: 112,
@@ -248,6 +259,10 @@ const CASE_INSENSITIVE_BOL_LOOKUP = new Map<string, CanonicalBolId>(
 
 /**
  * Regional oral dialect aliases that normalize to CanonicalBolId in the Open-Madal Specification.
+ *
+ * Includes the stroke names used in madal teaching (Kutumba / Raju Maharjan, Kathmandu Post 2020):
+ * Taang (open treble), Taak (closed treble), Ghin (open bass), Kha (closed bass), and
+ * Dhang (Taang + Ghin). Note that Taak is a closed stroke on the khari, so it maps to Ki, not Ta.
  */
 export const REGIONAL_BOL_ALIASES: Record<string, CanonicalBolId> = {
   ge: 'Ghe',
@@ -256,8 +271,11 @@ export const REGIONAL_BOL_ALIASES: Record<string, CanonicalBolId> = {
   khat: 'Ka',
   kha: 'Ka',
   tang: 'Tin',
+  taang: 'Tin',
   tan: 'Ta',
-  tak: 'Ta',
+  tak: 'Ki',
+  taak: 'Ki',
+  naa: 'Na',
   dhi: 'Dhin',
   dhang: 'Dha',
 };

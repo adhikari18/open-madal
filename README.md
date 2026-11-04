@@ -61,19 +61,22 @@ Today, **there is no formal digital or machine-readable standard for Madal notat
 
 ### Proposed Canonical Dual-Head Bol Specification (`MadalCode` v0.1)
 
-The compiler accepts both canonical *bols* and regional oral aliases (such as `Ge` → `Ghe`, `Tang` → `Tin`, `Kat` → `Ka`) and decomposes every token into explicit **Bhale (Left Bass)** and **Pothi (Right Treble)** physical states:
+The compiler accepts both canonical *bols* and regional oral aliases (such as `Ge` → `Ghe`, `Tang` → `Tin`, `Kat` → `Ka`), including the stroke names used in madal lessons (`Ghin`, `Kha`, `Taang`, `Taak`, `Dhang`, `Naa`). It decomposes every token into explicit **Bhale (Left Bass)** and **Pothi (Right Treble)** physical states:
 
-| Canonical Bol | Regional Aliases | Devanagari | Drumhead(s) | Articulation | Physical Technique |
+| Canonical Bol | Regional Aliases | Devanagari | Drumhead(s) | Articulation | Physical Technique (madal) |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **`Ghe`** / **`Ga`** / **`Dhum`** | `Ge`, `Ghin` | घे / ग / धुम | **Bhale** (Left Bass) | Open (`khula`) | Open resonant bass strike on the larger head |
-| **`Ka`** | `Kha`, `Kat`, `Khat` | का | **Bhale** (Left Bass) | Closed (`bandha`) | Flat-palm muted slap on the bass head |
-| **`Ta`** / **`Na`** | `Tak`, `Tan` | ता / ना | **Pothi** (Right Treble) | Rim (`kinara`) | Crisp finger strike on the treble rim/edge |
-| **`Ti`** / **`Tin`** | `Tang` | ति / तिन | **Pothi** (Right Treble) | Open (`khula`) | Resonant strike on the center black *khari* spot |
-| **`Ki`** | — | कि | **Pothi** (Right Treble) | Closed (`bandha`) | Muted treble finger tap |
-| **`Dha`** | `Dhang` | धा | **Both** (`Ghe` + `Ta`) | Compound Open | Simultaneous open bass `Ghe` + crisp treble `Ta` |
-| **`Dhin`** | `Dhi` | धिन | **Both** (`Ghe` + `Tin`) | Compound Ring | Simultaneous open bass `Ghe` + ringing treble `Tin` |
+| **`Ghe`** / **`Ga`** / **`Dhum`** | `Ge`, `Ghin` | घे / ग / धुम | **Bhale** (Left Bass) | Open (`khula`) | *Ghin*: four fingers together (no thumb) strike the large head and bounce off |
+| **`Ka`** | `Kha`, `Kat`, `Khat` | का | **Bhale** (Left Bass) | Closed (`bandha`) | *Kha*: middle, ring and little fingers strike the large head's *khari* and stay on the skin |
+| **`Ta`** | `Tan` | ता | **Pothi** (Right Treble) | Rim (`kinara`), open | *Taang*: index finger strikes the small head and lifts off |
+| **`Na`** | `Naa` | ना | **Pothi** (Right Treble) | Rim (`kinara`), open | *Naa*: lighter open stroke, about three semitones above *Taang* |
+| **`Ti`** / **`Tin`** | `Tang`, `Taang` | ति / तिन | **Pothi** (Right Treble) | Open (`khula`) | *Taang*: short (`Ti`) or fully ringing (`Tin`) |
+| **`Ki`** | `Tak`, `Taak` | कि | **Pothi** (Right Treble) | Closed (`bandha`) | *Taak*: middle, ring and little fingers strike the small head's *khari* and stay down |
+| **`Dha`** | `Dhang` | धा | **Both** (`Ghe` + `Ta`) | Compound Open | *Dhang*: *Ghin* + *Taang* struck together |
+| **`Dhin`** | `Dhi` | धिन | **Both** (`Ghe` + `Tin`) | Compound Ring | *Ghin* + fully ringing *Taang* |
 | **`Dhing`** | — | धिङ | **Both** (`Ghe^` + `Tin`) | Pitch-Bend | Bass strike with palm-heel pressure pitch-slide + `Tin` |
 | **`-`** / **`~`** | — | ऽ / 〜 | None | Rest / Sustain | Silent pause (`-`) or let previous stroke ring (`~`) |
+
+> **Head names vary by teacher.** The [Nepali Wikipedia](https://ne.wikipedia.org/wiki/मादल) calls the larger head *bhale* and the smaller *pothi* (that is what this project uses). Raju Maharjan of Kutumba ([Kathmandu Post, 2020](https://kathmandupost.com/weekender/2020/03/06/ghin-kha-taang-taak-ghin-ghin-taang-it-s-that-simple)) uses the opposite: *bhale* on the right, where *Taang* is played. The stroke names do not change, only the head labels. See [`docs/madal-acoustics.md`](docs/madal-acoustics.md) for the sound research behind the web engine.
 
 ---
 

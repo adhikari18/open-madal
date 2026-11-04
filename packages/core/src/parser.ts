@@ -97,7 +97,7 @@ export function parseBolToken(
   if (!bolDef) {
     diagnostics.push({
       severity: 'error',
-      message: `Unrecognized Madal bol "${rawToken}". Expected Ghe, Ka, Ta, Ti, Tin, Na, Ra, Di, Ri, Dha, Dhin, Dhing, Tirakita, Diri-Diri, -, or ~.`,
+      message: `Unrecognized Madal bol "${rawToken}". Expected Ghe, Ka, Ta, Ti, Tin, Na, Ra, Di, Ri, Dha, Dhin, Dhing, Tirakita, Diri-Diri, -, or ~ (or the teaching names Ghin, Kha, Taang, Taak, Dhang, Naa).`,
       line,
       column,
     });

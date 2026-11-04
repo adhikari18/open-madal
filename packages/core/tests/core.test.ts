@@ -130,6 +130,38 @@ describe('@open-madal/core parser & AST', () => {
     expect(beats[3].subdivisions[0].bol).toBe('Dhin');
   });
 
+  it('accepts madal teaching stroke names (Ghin, Kha, Taang, Taak, Dhang, Naa) with the correct heads', () => {
+    const src = `
+@meter: 6/4
+| Ghin Kha Taang Taak Dhang Naa |
+`;
+    const ast = parseMadalCode(src);
+    expect(ast.diagnostics).toHaveLength(0);
+    const tokens = ast.sections[0].bars[0].beats.map((b) => b.subdivisions[0]);
+    expect(tokens.map((t) => t.bol)).toEqual(['Ghe', 'Ka', 'Tin', 'Ki', 'Dha', 'Na']);
+
+    // Taak is a closed stroke on the small head's khari, not an open/rim stroke
+    expect(tokens[3].pothi?.articulation).toBe('closed');
+    expect(tokens[3].bhale).toBeUndefined();
+    // Kha is the closed stroke on the large head
+    expect(tokens[1].bhale?.articulation).toBe('closed');
+    // Dhang = Ghin (large head) + Taang (small head)
+    expect(tokens[4].bhale).toBeDefined();
+    expect(tokens[4].pothi).toBeDefined();
+  });
+
+  it('tunes the two heads about a fifth apart, as measured on a real madal', () => {
+    const bass = BOL_DICTIONARY.Ghe.bhale!.fundamentalHz;
+    const treble = BOL_DICTIONARY.Tin.pothi!.fundamentalHz;
+    expect(bass).toBeGreaterThan(150);
+    expect(bass).toBeLessThan(200);
+    expect(treble / bass).toBeGreaterThan(1.4);
+    expect(treble / bass).toBeLessThan(1.65);
+    // Open strokes ring far longer than closed ones
+    expect(BOL_DICTIONARY.Ghe.bhale!.decaySec).toBeGreaterThan(BOL_DICTIONARY.Ka.bhale!.decaySec * 4);
+    expect(BOL_DICTIONARY.Tin.pothi!.decaySec).toBeGreaterThan(BOL_DICTIONARY.Ki.pothi!.decaySec * 4);
+  });
+
   it('computes exact lowest-terms rational beat fractions without floating-point drift', () => {
     const oneThird = createRational(1, 3);
     const oneSixth = divideRationalByInt(oneThird, 2);
