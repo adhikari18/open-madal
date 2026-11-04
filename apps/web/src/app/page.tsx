@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   BOL_DICTIONARY,
+  BolTokenNode,
   CanonicalBolId,
   DEFAULT_MADAL_SCALE,
   MADAL_SCALES,
@@ -18,6 +19,10 @@ import {
   renderRadialClockSVG,
   validateMadalProgram,
 } from '@open-madal/core';
+import {
+  HeadStrikeAnimationState,
+  MadalHandAnimator,
+} from '@/components/MadalHandAnimator';
 import {
   Activity,
   BookOpen,
@@ -120,9 +125,71 @@ export default function OpenMadalStudioPage() {
   const [activeEventIdx, setActiveEventIdx] = useState<number | null>(null);
   const [activePadBol, setActivePadBol] = useState<CanonicalBolId | null>(null);
   const [activeRollId, setActiveRollId] = useState<string | null>(null);
+  const [bhaleStrike, setBhaleStrike] = useState<HeadStrikeAnimationState | null>(null);
+  const [pothiStrike, setPothiStrike] = useState<HeadStrikeAnimationState | null>(null);
+  const [lastActiveBolLabel, setLastActiveBolLabel] = useState<{
+    roman: string;
+    devanagari: string;
+  } | null>(null);
 
+  const strikeSeqRef = useRef<number>(0);
+  const bhaleResetTimerRef = useRef<number | null>(null);
+  const pothiResetTimerRef = useRef<number | null>(null);
   const audioEngineRef = useRef<MadalAudioEngine | null>(null);
   const timerRef = useRef<number | null>(null);
+
+  const triggerVisualStrike = useCallback((token: BolTokenNode, velocity = 105) => {
+    if (token.bol === '-' || token.bol === '~') return;
+    strikeSeqRef.current += 1;
+    const seq = strikeSeqRef.current;
+    const roman = formatBolLabel(token, 'roman');
+    const devanagari = formatBolLabel(token, 'devanagari');
+    setLastActiveBolLabel({ roman, devanagari });
+
+    if (token.bhale) {
+      if (bhaleResetTimerRef.current !== null) {
+        window.clearTimeout(bhaleResetTimerRef.current);
+      }
+      setBhaleStrike({
+        seq,
+        stroke: token.bhale.stroke,
+        articulation:
+          token.bhale.articulation === 'closed'
+            ? 'closed'
+            : token.bhale.articulation === 'pitch-bend'
+            ? 'pitch-bend'
+            : 'open',
+        velocity,
+        bolLabel: roman,
+        devanagariLabel: devanagari,
+      });
+      bhaleResetTimerRef.current = window.setTimeout(() => {
+        setBhaleStrike(null);
+      }, 460);
+    }
+
+    if (token.pothi) {
+      if (pothiResetTimerRef.current !== null) {
+        window.clearTimeout(pothiResetTimerRef.current);
+      }
+      setPothiStrike({
+        seq,
+        stroke: token.pothi.stroke,
+        articulation:
+          token.pothi.articulation === 'closed'
+            ? 'closed'
+            : token.pothi.articulation === 'rim'
+            ? 'rim'
+            : 'open',
+        velocity,
+        bolLabel: roman,
+        devanagariLabel: devanagari,
+      });
+      pothiResetTimerRef.current = window.setTimeout(() => {
+        setPothiStrike(null);
+      }, 440);
+    }
+  }, []);
 
   const getAudioEngine = useCallback(() => {
     if (!audioEngineRef.current) {
@@ -211,7 +278,10 @@ export default function OpenMadalStudioPage() {
         engine.triggerBolToken(ev.token, nextTime, ev.velocity);
       }
       window.setTimeout(() => {
-        if (!isCancelled) setActiveEventIdx(idx);
+        if (!isCancelled) {
+          setActiveEventIdx(idx);
+          triggerVisualStrike(ev.token, ev.velocity);
+        }
       }, Math.max(0, (nextTime - now) * 1000));
 
       nextTime += Math.max(0.04, ev.durationSeconds);
@@ -271,16 +341,20 @@ export default function OpenMadalStudioPage() {
       return `@scale: ${newScale}\n${prev}`;
     });
     if (!isPlaying) {
-      const token = parseBolToken('Dha', 1, 1, 1, []);
+      const token = parseBolToken('Dhang', 1, 1, 1, []);
       engine.triggerBolToken(token, undefined, 110);
+      triggerVisualStrike(token, 110);
     }
   };
 
   // Audition a single bol pad
   const handleAuditionBol = (bolId: CanonicalBolId) => {
     const engine = getAudioEngine();
-    const token = parseBolToken(bolId, 1, 1, 1, []);
-    engine.triggerBolToken(token, undefined, BOL_DICTIONARY[bolId]?.defaultVelocity ?? 108);
+    const rawName = MADAL_STROKE_NAMES[bolId]?.split(' ')[0] ?? bolId;
+    const token = parseBolToken(rawName, 1, 1, 1, []);
+    const vel = BOL_DICTIONARY[bolId]?.defaultVelocity ?? 108;
+    engine.triggerBolToken(token, undefined, vel);
+    triggerVisualStrike(token, vel);
     setActivePadBol(bolId);
     window.setTimeout(() => setActivePadBol(null), 180);
   };
@@ -294,10 +368,23 @@ export default function OpenMadalStudioPage() {
     for (const ev of rollEvents) {
       if (ev.token.bol !== '-' && ev.token.bol !== '~') {
         engine.triggerBolToken(ev.token, start + ev.timeSeconds, ev.velocity);
+        window.setTimeout(() => {
+          triggerVisualStrike(ev.token, ev.velocity);
+        }, Math.max(0, Math.round(( 0.02 + ev.timeSeconds) * 1000)));
       }
     }
     setActiveRollId(roll.id);
     window.setTimeout(() => setActiveRollId(null), 450);
+  };
+
+  // Strike drumhead directly from the interactive Madal visualizer
+  const handleDirectHeadStrike = (head: 'bhale' | 'pothi', closed: boolean) => {
+    const rawBol = head === 'bhale' ? (closed ? 'Kha' : 'Ghin') : closed ? 'Taak' : 'Taang';
+    const engine = getAudioEngine();
+    const token = parseBolToken(rawBol, 1, 1, 1, []);
+    const vel = BOL_DICTIONARY[token.bol]?.defaultVelocity ?? 105;
+    engine.triggerBolToken(token, undefined, vel);
+    triggerVisualStrike(token, vel);
   };
 
   // Insert bol into source editor
@@ -514,6 +601,15 @@ export default function OpenMadalStudioPage() {
             </div>
           </div>
         </section>
+
+        {/* Interactive Hand & Finger Articulation Stage */}
+        <MadalHandAnimator
+          bhaleStrike={bhaleStrike}
+          pothiStrike={pothiStrike}
+          activeBolLabel={lastActiveBolLabel?.roman}
+          activeDevanagari={lastActiveBolLabel?.devanagari}
+          onStrikeHead={handleDirectHeadStrike}
+        />
 
         {/* Audition Drum Pads (Bhale + Pothi + Compound Bols) */}
         <section className="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4 space-y-3">
@@ -762,13 +858,14 @@ export default function OpenMadalStudioPage() {
                     return (
                       <button
                         key={idx}
-                        onClick={() =>
-                           getAudioEngine().triggerBolToken(
+                        onClick={() => {
+                          getAudioEngine().triggerBolToken(
                             ev.token,
                             undefined,
                             ev.velocity
-                          )
-                        }
+                          );
+                          triggerVisualStrike(ev.token, ev.velocity);
+                        }}
                         className={`min-w-[60px] rounded-xl p-2 border flex flex-col items-center gap-1.5 transition ${
                           isCurrent
                             ? 'bg-orange-500/20 border-orange-400 ring-2 ring-orange-400/50'
