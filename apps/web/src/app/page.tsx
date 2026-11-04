@@ -30,16 +30,29 @@ import {
 } from 'lucide-react';
 import { MadalAudioEngine } from '@/lib/madalSynth';
 
+/** The core madal strokes taught in lessons: Ghin, Kha, Taang, Taak, Naa, and Dhang. */
 const PLAYABLE_PAD_BOLS: CanonicalBolId[] = [
   'Ghe',
   'Ka',
   'Ta',
-  'Ti',
   'Tin',
+  'Ki',
+  'Na',
   'Dha',
   'Dhin',
-  'Dhing',
 ];
+
+/** Name of the physical madal stroke behind each pad (as taught by madal teachers). */
+const MADAL_STROKE_NAMES: Partial<Record<CanonicalBolId, string>> = {
+  Ghe: 'Ghin',
+  Ka: 'Kha',
+  Ta: 'Taang',
+  Tin: 'Taang · ring',
+  Ki: 'Taak',
+  Na: 'Naa',
+  Dha: 'Dhang',
+  Dhin: 'Ghin + Taang',
+};
 
 export default function OpenMadalStudioPage() {
   const [selectedPresetId, setSelectedPresetId] = useState<string>(TAAL_PRESETS[0].id);
@@ -99,7 +112,9 @@ export default function OpenMadalStudioPage() {
     setActiveEventIdx(null);
   }, []);
 
-  // Sequencer step playback loop
+  // Sequencer step playback loop.
+  // Strokes are scheduled on the AudioContext clock slightly ahead of time, so timing stays
+  // steady like a real player's hands instead of drifting with setTimeout jitter.
   useEffect(() => {
     if (!isPlaying) return;
     if (timeline.length === 0) {
@@ -107,25 +122,39 @@ export default function OpenMadalStudioPage() {
       return;
     }
 
+    const LOOKAHEAD_SEC = 0.06;
     let stepIndex = 0;
     let isCancelled = false;
     const engine = getAudioEngine();
+    let nextTime = engine.getCurrentTime() + LOOKAHEAD_SEC;
 
     const scheduleStep = () => {
       if (isCancelled) return;
+      const now = engine.getCurrentTime();
+      if (nextTime < now - 0.1) {
+        // Tab was throttled in the background: resync instead of bursting missed strokes
+        nextTime = now + LOOKAHEAD_SEC;
+      }
+
       const ev = timeline[stepIndex];
-      setActiveEventIdx(stepIndex);
+      const idx = stepIndex;
 
       if (metronomeEnabled && ev.subdivisionIndex === 0) {
-        engine.triggerMetronome(ev.beatInBar === 1);
+        engine.triggerMetronome(ev.beatInBar === 1, nextTime);
       }
       if (ev.token.bol !== '-' && ev.token.bol !== '~') {
-        engine.triggerBolToken(ev.token, undefined, ev.velocity);
+        engine.triggerBolToken(ev.token, nextTime, ev.velocity);
       }
+      window.setTimeout(() => {
+        if (!isCancelled) setActiveEventIdx(idx);
+      }, Math.max(0, (nextTime - now) * 1000));
 
-      const waitMs = Math.max(40, ev.durationSeconds * 1000);
+      nextTime += Math.max(0.04, ev.durationSeconds);
       stepIndex = (stepIndex + 1) % timeline.length;
-      timerRef.current = window.setTimeout(scheduleStep, waitMs);
+      timerRef.current = window.setTimeout(
+        scheduleStep,
+        Math.max(0, (nextTime - engine.getCurrentTime() - LOOKAHEAD_SEC) * 1000)
+      );
     };
 
     scheduleStep();
@@ -137,6 +166,11 @@ export default function OpenMadalStudioPage() {
       }
     };
   }, [isPlaying, timeline, metronomeEnabled, getAudioEngine, stopPlayback]);
+
+  // Fetch & decode the madal recordings up front so the first stroke is already real audio
+  useEffect(() => {
+    void getAudioEngine().preload();
+  }, [getAudioEngine]);
 
   // Select a built-in Taal preset
   const handleSelectPreset = (presetId: string) => {
@@ -389,6 +423,7 @@ export default function OpenMadalStudioPage() {
                 <button
                   key={bolId}
                   onClick={() => handleAuditionBol(bolId)}
+                  title={def.description}
                   className={`p-3 rounded-xl border bg-slate-950/80 text-left transition transform ${borderClass} ${
                     isTriggered ? 'scale-95 ring-2 ring-orange-400 bg-slate-900' : ''
                   }`}
@@ -402,9 +437,8 @@ export default function OpenMadalStudioPage() {
                     </span>
                   </div>
                   <div className="mt-1 text-[10px] uppercase tracking-wider font-semibold text-slate-400">
-                    {def.head === 'both'
-                      ? `${def.bhale?.stroke} + ${def.pothi?.stroke}`
-                      : `${def.head} • ${def.articulation}`}
+                    {MADAL_STROKE_NAMES[bolId] ?? def.roman} •{' '}
+                    {def.head === 'both' ? 'both heads' : def.head}
                   </div>
                 </button>
               );
