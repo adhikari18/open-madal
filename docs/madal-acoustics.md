@@ -58,8 +58,20 @@ What the numbers show:
 
 **Verification:** The studio's output was captured from headless Chrome and analysed the same way as the recordings. The fundamentals, partial ratios and decay times of every pad match the recordings within a few Hz and tens of milliseconds, with no clipping.
 
-## 5. Open Questions
+## 5. Taal Notations
 
-- **Jhyaure, Khyali, Tamang Selo and Chudka** are still the original project drafts, and their notation is not yet backed by a source. Notation transcribed from a teacher or a recording should replace them.
+| Taal | Meter | Beat-by-beat cycle |
+|---|---|---|
+| **Jhyaure Taal** (झ्याउरे ताल) | 6/8 | `१: Ghin (घिं)` · `२: - (X)` · `३: Taang (तां)` · `४: Taak (तक्)` · `५: Ghin (घिं)` · `६: Taang (तां)`<br>**Kaat (काट):** `१: Taang (तां)` · `२: Ghin (घिं)` · `३: Taang (तां)` · `४: Ghin (घिं)` · `५: Taang (तां)` · `६: - (X)` |
+| **Sangini Taal** (सङ्गिनी ताल) | 6/8 | `१: Ghin` · `२: Ghin` · `३: Taang` · `४: Taak` · `५: Ghin` · `६: Taang` |
+| **Samala Taal** (समला ताल) | 4/4 | `१: Ghin` · `२: [Kha Taang]` · `३: [Taak Ghin]` · `४: [Ghin Taang]` |
+| **Maruni Taal** (मारुनी ताल) | 4/4 | `१: Taang` · `२: [Kha Taang]` · `३: [Taang Ghin]` · `४: [Ghin Taang]` |
+
+Notice the relationship between 6/8 **Jhyaure** and **Sangini**: both share the same 6-count skeleton, except Beat 2 is a rest (`X`) in Jhyaure (letting Beat 1's *Ghin* ring across Beats 1–2) and a second *Ghin* in Sangini.
+
+## 6. Open Questions
+
+- **Khyali, Tamang Selo and Chudka** are still the original project drafts, and their notation is not yet backed by a teacher or recording source.
 - The `Ghe^` / `Dhing` heel pitch-bend is kept from the original specification, but none of the sources above document it for madal.
-- Only one instrument, played by one player, was measured. Madals differ in size and tuning: eastern madals are larger, western madals smaller. Adding more recordings (round-robin and velocity layers) is the next step for realism.
+- Adding multi-velocity and round-robin one-shot recordings across madals of different sizes is the next step for realism.
+

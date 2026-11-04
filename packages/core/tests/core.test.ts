@@ -112,8 +112,33 @@ describe('@open-madal/core parser & AST', () => {
 
     expect(linearRoman).toContain('<svg');
     expect(linearRoman).toContain('Traditional Jhyaure Taal');
-    expect(linearDeva).toContain(BOL_DICTIONARY.Dha.devanagari);
+    expect(linearRoman).toContain('>Ghin');
+    expect(linearRoman).toContain('Taang');
+    expect(linearRoman).toContain('Taak');
+    expect(linearDeva).toContain('घिं');
+    expect(linearDeva).toContain('तां');
+    expect(linearDeva).toContain('तक्');
     expect(radialSvg).toContain('<polygon');
+  });
+
+  it('compiles Jhyaure Taal 6/8 Theka (Ghin - Taang Taak Ghin Taang) and Kaat (Taang Ghin Taang Ghin Taang -)', () => {
+    const ast = parseMadalCode(TAAL_PRESETS[0].source);
+    expect(ast.metadata.taal).toBe('Jhyaure');
+    expect(ast.metadata.meter).toEqual({ beatsPerBar: 6, beatUnit: 8 });
+
+    const thekaBeats = ast.sections[0].bars[0].beats.map((b) => b.subdivisions[0]);
+    // 1:Ghin (Ghe), 2:- (rest), 3:Taang (Tin), 4:Taak (Ki), 5:Ghin (Ghe), 6:Taang (Tin)
+    expect(thekaBeats.map((t) => t.bol)).toEqual(['Ghe', '-', 'Tin', 'Ki', 'Ghe', 'Tin']);
+    expect(thekaBeats[0].bhale?.articulation).toBe('open');
+    expect(thekaBeats[1].bol).toBe('-');
+    expect(thekaBeats[2].pothi?.articulation).toBe('open');
+    expect(thekaBeats[3].pothi?.articulation).toBe('closed');
+    expect(thekaBeats[4].bhale?.articulation).toBe('open');
+    expect(thekaBeats[5].pothi?.articulation).toBe('open');
+
+    const kaatBeats = ast.sections[1].bars[0].beats.map((b) => b.subdivisions[0]);
+    // Kaat: 1:Taang, 2:Ghin, 3:Taang, 4:Ghin, 5:Taang, 6:- (rest)
+    expect(kaatBeats.map((t) => t.bol)).toEqual(['Tin', 'Ghe', 'Tin', 'Ghe', 'Tin', '-']);
   });
 
   it('normalizes regional oral dialect aliases (Ge -> Ghe, Tang -> Tin, Kat -> Ka) into canonical dual-head AST nodes', () => {

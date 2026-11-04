@@ -7,6 +7,7 @@ import {
   TAAL_PRESETS,
   compileToMidi,
   flattenTimeline,
+  formatBolLabel,
   parseBolToken,
   parseMadalCode,
   renderLinearTabSVG,
@@ -376,7 +377,7 @@ export default function OpenMadalStudioPage() {
               <input
                 type="range"
                 min={60}
-                max={220}
+                max={260}
                 value={ast.metadata.tempo}
                 onChange={(e) => handleTempoChange(Number(e.target.value))}
                 className="w-full accent-orange-500 cursor-pointer"
@@ -593,9 +594,7 @@ export default function OpenMadalStudioPage() {
                 <div className="inline-flex gap-1.5 min-w-full">
                   {timeline.map((ev, idx) => {
                     const isCurrent = activeEventIdx === idx;
-                    const def = BOL_DICTIONARY[ev.token.bol];
-                    const label =
-                      scriptMode === 'devanagari' ? def.devanagari : def.roman;
+                    const label = formatBolLabel(ev.token, scriptMode);
 
                     return (
                       <button

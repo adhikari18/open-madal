@@ -42,21 +42,22 @@ Today, **there is no formal digital or machine-readable standard for Madal notat
 ## `MadalCode` Notation Example
 
 ```madal
-# Classic Jhyaure Taal (6/8) — Lok Dohori & Hill Folk Dance
+# Traditional Jhyaure Taal (6/8) — Lok Dohori & Hill Folk Songs
+# 6 Matras: १:घिं  २:X  ३:तां  ४:तक्  ५:घिं  ६:तां
+# Kaat (काट): १:तां  २:घिं  ३:तां  ४:घिं  ५:तां  ६:X
 @title: Traditional Jhyaure Taal
 @taal: Jhyaure
-@tempo: 132
+@tempo: 180
 @meter: 6/8
-@region: Central & Western Hills, Nepal
+@region: Nepal (Lok Dohori & Hill Folk Songs)
 @tali: 1, 4
 @khali: 2
 
 [Theka]
-| >Dha - Ti : Ta Ghe - | x2
+| >Ghin - Taang : Taak Ghin Taang | x4
 
-[Laya Variation]
-| >Dha - [Ti Ta] : Ghe >Dhin - |
-| >Dhing - Ti : [Ta Ka] Ghe - |
+[Kaat]
+| >Taang Ghin Taang : Ghin Taang - | x2
 ```
 
 ### Proposed Canonical Dual-Head Bol Specification (`MadalCode` v0.1)

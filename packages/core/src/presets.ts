@@ -15,25 +15,30 @@ export const TAAL_PRESETS: TaalPreset[] = [
     name: 'Jhyaure Taal',
     devanagariName: 'झ्याउरे ताल',
     meter: '6/8',
-    defaultTempo: 132,
-    region: 'Central & Western Hills (Gandaki / Lumbini)',
+    defaultTempo: 180,
+    region: 'Nepal (Lok Dohori & Hill Folk Songs — "Lekali He Choyako Doko")',
     description:
-      'The quintessential 6-beat Nepali folk dance rhythm driving Lok Dohori and festive hill songs. Accents fall on Beat 1 (Sam) and Beat 4.',
-    source: `# Classic Jhyaure Taal (6/8)
+      '6-count cycle: Ghin - Taang | Taak Ghin Taang (घिं X तां तक् घिं तां), with Kaat turnaround: Taang Ghin Taang | Ghin Taang - (तां घिं तां घिं तां X).',
+    source: `# Traditional Jhyaure Taal (6/8)
+# 6 Matras: १:घिं  २:X  ३:तां  ४:तक्  ५:घिं  ६:तां
+# Kaat (काट): १:तां  २:घिं  ३:तां  ४:घिं  ५:तां  ६:X
 @title: Traditional Jhyaure Taal
 @taal: Jhyaure
-@tempo: 132
+@tempo: 180
 @meter: 6/8
-@region: Central & Western Hills, Nepal
+@region: Nepal (Lok Dohori & Hill Folk Songs)
 @tali: 1, 4
 @khali: 2
 
 [Theka]
-| >Dha - Ti : Ta Ghe - | x2
+| >Ghin - Taang : Taak Ghin Taang | x4
 
-[Laya Variation]
-| >Dha - [Ti Ta] : Ghe >Dhin - |
-| >Dhing - Ti : [Ta Ka] Ghe - |`,
+[Kaat]
+| >Taang Ghin Taang : Ghin Taang - | x2
+
+[Lekali He Choyako Doko]
+| >Ghin - Taang : Taak Ghin Taang | x3
+| >Taang Ghin Taang : Ghin Taang - |`,
   },
   {
     id: 'khyali',

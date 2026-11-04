@@ -19,10 +19,33 @@ function escapeXml(unsafe: string): string {
     .replace(/'/g, '&apos;');
 }
 
-function formatBolLabel(token: BolTokenNode, script: 'roman' | 'devanagari'): string {
+const TEACHING_STROKE_LABELS: Record<string, { roman: string; devanagari: string }> = {
+  ghin: { roman: 'Ghin', devanagari: 'घिं' },
+  kha: { roman: 'Kha', devanagari: 'ख' },
+  taang: { roman: 'Taang', devanagari: 'तां' },
+  tang: { roman: 'Taang', devanagari: 'तां' },
+  taak: { roman: 'Taak', devanagari: 'तक्' },
+  tak: { roman: 'Taak', devanagari: 'तक्' },
+  dhang: { roman: 'Dhang', devanagari: 'धां' },
+  naa: { roman: 'Naa', devanagari: 'ना' },
+};
+
+export function formatBolLabel(token: BolTokenNode, script: 'roman' | 'devanagari'): string {
   const def = BOL_DICTIONARY[token.bol];
   if (!def) return token.raw;
-  const base = script === 'devanagari' ? def.devanagari : def.roman;
+  const rawStem = token.raw
+    .trim()
+    .replace(/^>+/, '')
+    .replace(/^\([A-Za-z]+\)/, '')
+    .replace(/^>+/, '')
+    .replace(/[\^.]*$/, '')
+    .toLowerCase();
+  const teachingLabel = TEACHING_STROKE_LABELS[rawStem];
+  const base = teachingLabel
+    ? teachingLabel[script]
+    : script === 'devanagari'
+    ? def.devanagari
+    : def.roman;
   const prefix = token.modifiers.accent ? '>' : '';
   const suffix =
     (token.modifiers.pitchBend ? '^' : '') + (token.modifiers.damped ? '.' : '');
