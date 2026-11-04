@@ -1,26 +1,27 @@
 # Traditional Tamang Selo (4/4) — Damphu & Madal Rhythm
-# 4 Matras: १:घिं  २:X  ३:तक्  ४:घिं
-# Beat 4's open Ghin leads directly into Beat 1's Ghin across the barline ("Taak Ghin-Ghin")
-# Kaat (काट): [घिं घिं] [X घिं] तां घिं | तां घिं तां X
+# 4-count Selo cycle (घिं X तक् घिं) played two cycles per 4/4 bar:
+#   Beat 1: घिं (Ghin rings across 2 eighth-notes)
+#   Beat 2: [तक् घिं] ([Taak Ghin] leads into Beat 3 Ghin for the "Taak Ghin-Ghin" double bass)
+#   Beat 3: घिं (Ghin rings across 2 eighth-notes)
+#   Beat 4: [तक् घिं] ([Taak Ghin] leads into Beat 1 Ghin across the barline)
+# Kaat (काट): १:[घिं घिं]  २:[~ घिं]  ३:[तां घिं]  ४:[तां X]
 @title: Traditional Tamang Selo
 @taal: Tamang Selo
 @tempo: 140
 @meter: 4/4
 @region: Eastern & Central Himalayan Foothills (Sailung / Helambu)
 @tali: 1, 3
-@khali: 2
+@khali: 2, 4
 
 [Theka]
-| >Ghin - Taak Ghin | x4
+| >Ghin [Taak Ghin] >Ghin [Taak Ghin] | x4
 
 [Treble Response]
-| >Ghin - Taak Taang |
-| >Taang - Taak Ghin |
+| >Ghin [Taak Taang] >Taang [Taak Ghin] | x2
 
 [Kha-Taak Roll]
 | >Ghin [Kha Taak] [Kha Taang] Taang |
-| [Kha Taak] [Kha Ghin] >Ghin - |
+| [Kha Taak] [Kha Ghin] >Ghin [Taak Ghin] |
 
 [Kaat]
-| [>Ghin Ghin] [- Ghin] Taang Ghin |
-| >Taang Ghin Taang - |
+| [>Ghin Ghin] [~ Ghin] [Taang Ghin] [Taang -] |

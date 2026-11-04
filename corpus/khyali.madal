@@ -1,6 +1,6 @@
 # Traditional Khyali Taal (8/8) — Lok Dohori, Adhunik Folk & Bhajan
-# Spoken rhyme (8 matras): १:धिङ  २:s  ३:ख  ४:ति  ५:ता  ६:क  ७:धि  ८:ना
-# Physical strokes:        १:घिं   २:X  ३:ख  ४:तां  ५:तक्  ६:घिं  ७:घिं  ८:तां
+# Spoken rhyme (8 matras): १:धिङ  २:s  ३:ख  ४:ति  :  ५:ता  ६:क  ७:धि  ८:ना
+# Physical strokes:        १:घिं   २:X  ३:ख  ४:तां  :  ५:तक्  ६:घिं  ७:घिं  ८:तां
 # Uthaan (उठान): तां [घिं तां] तां [घिं तां] : तां [घिं तां] घिं तां
 # Kaat (काट):   १:घिं  २:तां  ३:तां  ४:घिं : ५:तां  ६:तां  ७:घिं  ८:तां
 @title: Traditional Khyali Taal
@@ -17,9 +17,9 @@
 [Uthaan]
 | >Taang [Ghin Taang] Taang [Ghin Taang] : Taang [Ghin Taang] Ghin Taang |
 
-[Kaat]
-| >Ghin Taang Taang Ghin : Taang Taang Ghin Taang |
-| >Ghin Taang - Taang : - - - - |
-
 [Laya Variation]
 | >Ghin - Kha Taang : Taang - Taang Ghin | x2
+
+[Kaat]
+| >Ghin Taang Taang Ghin : Taang Taang Ghin Taang |
+| >Ghin Taang - Taang : Taak Ghin Ghin Taang |

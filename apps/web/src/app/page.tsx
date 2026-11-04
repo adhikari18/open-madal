@@ -55,14 +55,67 @@ const MADAL_STROKE_NAMES: Partial<Record<CanonicalBolId, string>> = {
   Dhin: 'Ghin + Taang',
 };
 
+/** Traditional Madal rolling tones & sub-beat phrase patterns for one-click auditioning. */
+const ROLLING_PATTERNS: {
+  id: string;
+  label: string;
+  devanagari: string;
+  code: string;
+  description: string;
+}[] = [
+  {
+    id: 'ghin-ghin',
+    label: '[Ghin Ghin]',
+    devanagari: 'घिं घिं',
+    code: '[>Ghin Ghin]',
+    description: 'Double-bass Bhale pickup roll used in Tamang Selo, Samala, and Sangini Kaat',
+  },
+  {
+    id: 'kha-taak',
+    label: '[Kha Taak]',
+    devanagari: 'ख तक्',
+    code: '[Kha Taak]',
+    description: 'Cross-head closed roll (Bhale Kha + Pothi Taak) used in Tamang Selo & Maruni',
+  },
+  {
+    id: 'taak-ghin',
+    label: '[Taak Ghin]',
+    devanagari: 'तक् घिं',
+    code: '[Taak Ghin]',
+    description: 'Closed treble into open bass bounce used in Samala, Selo, and Maruni Kaat',
+  },
+  {
+    id: 'ghin-taang',
+    label: '[Ghin Taang]',
+    devanagari: 'घिं तां',
+    code: '[>Ghin Taang]',
+    description: 'Open bass-to-treble rolling pair used in Khyali Uthaan, Samala, and Maruni',
+  },
+  {
+    id: 'tirakita',
+    label: 'Tirakita',
+    devanagari: 'तिरकिट',
+    code: '>Tirakita',
+    description: '4-stroke ornamental Pothi/Bhale rebound roll (Ti-Ra-Ki-Ta)',
+  },
+  {
+    id: 'diri-diri',
+    label: 'Diri-Diri',
+    devanagari: 'दिरिदिरि',
+    code: '>Diri-Diri',
+    description: '4-stroke alternating dual-head resonant roll (Di-Ri-Di-Ri)',
+  },
+];
+
 export default function OpenMadalStudioPage() {
   const [selectedPresetId, setSelectedPresetId] = useState<string>(TAAL_PRESETS[0].id);
   const [sourceCode, setSourceCode] = useState<string>(TAAL_PRESETS[0].source);
   const [scriptMode, setScriptMode] = useState<'roman' | 'devanagari'>('roman');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [metronomeEnabled, setMetronomeEnabled] = useState<boolean>(true);
+  const [metronomeEnabled, setMetronomeEnabled] = useState<boolean>(false);
   const [activeEventIdx, setActiveEventIdx] = useState<number | null>(null);
   const [activePadBol, setActivePadBol] = useState<CanonicalBolId | null>(null);
+  const [activeRollId, setActiveRollId] = useState<string | null>(null);
 
   const audioEngineRef = useRef<MadalAudioEngine | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -197,9 +250,24 @@ export default function OpenMadalStudioPage() {
   const handleAuditionBol = (bolId: CanonicalBolId) => {
     const engine = getAudioEngine();
     const token = parseBolToken(bolId, 1, 1, 1, []);
-    engine.triggerBolToken(token, undefined, 112);
+    engine.triggerBolToken(token, undefined, BOL_DICTIONARY[bolId]?.defaultVelocity ?? 108);
     setActivePadBol(bolId);
     window.setTimeout(() => setActivePadBol(null), 180);
+  };
+
+  // Audition a multi-stroke rolling tone / phrase pattern
+  const handleAuditionRoll = (roll: (typeof ROLLING_PATTERNS)[number]) => {
+    const engine = getAudioEngine();
+    const rollAst = parseMadalCode(`@tempo: 110\n@meter: 4/4\n| ${roll.code} |`);
+    const rollEvents = flattenTimeline(rollAst);
+    const start = engine.getCurrentTime() + 0.02;
+    for (const ev of rollEvents) {
+      if (ev.token.bol !== '-' && ev.token.bol !== '~') {
+        engine.triggerBolToken(ev.token, start + ev.timeSeconds, ev.velocity);
+      }
+    }
+    setActiveRollId(roll.id);
+    window.setTimeout(() => setActiveRollId(null), 450);
   };
 
   // Insert bol into source editor
@@ -444,6 +512,40 @@ export default function OpenMadalStudioPage() {
                 </button>
               );
             })}
+          </div>
+
+          {/* Rolling Tones & Sub-Beat Phrase Pads */}
+          <div className="pt-2 border-t border-slate-800/70 space-y-2">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Rolling Tones &amp; Sub-Beat Phrase Rolls (Click to Audition Roll)
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+              {ROLLING_PATTERNS.map((roll) => {
+                const isTriggered = activeRollId === roll.id;
+                return (
+                  <button
+                    key={roll.id}
+                    onClick={() => handleAuditionRoll(roll)}
+                    title={roll.description}
+                    className={`p-2.5 rounded-xl border border-amber-500/35 hover:border-amber-400 bg-slate-950/80 text-left transition transform ${
+                      isTriggered ? 'scale-95 ring-2 ring-amber-400 bg-slate-900' : ''
+                    }`}
+                  >
+                    <div className="flex items-baseline justify-between gap-1">
+                      <span className="text-xs font-bold font-mono text-amber-200">
+                        {roll.label}
+                      </span>
+                      <span className="text-xs font-semibold text-slate-400">
+                        {roll.devanagari}
+                      </span>
+                    </div>
+                    <div className="mt-1 text-[10px] text-slate-400 line-clamp-1">
+                      {roll.description}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </section>
 

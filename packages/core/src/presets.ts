@@ -18,23 +18,27 @@ export const TAAL_PRESETS: TaalPreset[] = [
     defaultTempo: 180,
     region: 'Nepal (Lok Dohori & Hill Folk Songs — "Lekali He Choyako Doko")',
     description:
-      '6-count cycle: Ghin - Taang | Taak Ghin Taang (घिं X तां तक् घिं तां), with Kaat turnaround: Taang Ghin Taang | Ghin Taang - (तां घिं तां घिं तां X).',
-    source: `# Traditional Jhyaure Taal (6/8)
-# 6 Matras: १:घिं  २:X  ३:तां  ४:तक्  ५:घिं  ६:तां
-# Kaat (काट): १:तां  २:घिं  ३:तां  ४:घिं  ५:तां  ६:X
+      '6-count cycle: Ghin - Taang : Taak Ghin Taang (घिं X तां : तक् घिं तां), with Rolling Variation and Kaat turnaround: Taang Ghin Taang : Ghin Taang - (तां घिं तां : घिं तां X).',
+    source: `# Traditional Jhyaure Taal (6/8) — Lok Dohori & Hill Folk Songs
+# 6 Matras: १:घिं  २:X  ३:तां  :  ४:तक्  ५:घिं  ६:तां
+# Kaat (काट): १:तां  २:घिं  ३:तां  :  ४:घिं  ५:तां  ६:X
 @title: Traditional Jhyaure Taal
 @taal: Jhyaure
 @tempo: 180
 @meter: 6/8
 @region: Nepal (Lok Dohori & Hill Folk Songs)
-@tali: 1, 4
-@khali: 2
+@tali: 1
+@khali: 4
 
 [Theka]
 | >Ghin - Taang : Taak Ghin Taang | x4
 
+[Rolling Variation]
+| >Ghin Ghin Taang : Taak Ghin Taang | x2
+| >Ghin - Taang : Ghin Ghin Taang | x2
+
 [Kaat]
-| >Taang Ghin Taang : Ghin Taang - | x2
+| >Taang Ghin Taang : Ghin Taang - |
 
 [Lekali He Choyako Doko]
 | >Ghin - Taang : Taak Ghin Taang | x3
@@ -48,10 +52,10 @@ export const TAAL_PRESETS: TaalPreset[] = [
     defaultTempo: 176,
     region: 'Nepal (Lok Dohori, Adhunik Folk & Bhajan)',
     description:
-      '8-count cycle: Ghin - Kha Taang | Taak Ghin Ghin Taang (घिं X ख तां तक् घिं घिं तां; spoken: धिङ s ख ति ता क धि ना), with Uthaan pickup and Kaat turnaround.',
-    source: `# Traditional Khyali Taal (8/8)
-# Spoken rhyme (8 matras): १:धिङ  २:s  ३:ख  ४:ति  ५:ता  ६:क  ७:धि  ८:ना
-# Physical strokes:        १:घिं   २:X  ३:ख  ४:तां  ५:तक्  ६:घिं  ७:घिं  ८:तां
+      '8-count cycle: Ghin - Kha Taang : Taak Ghin Ghin Taang (घिं X ख तां : तक् घिं घिं तां; spoken: धिङ s ख ति ता क धि ना), with Uthaan pickup and Kaat turnaround.',
+    source: `# Traditional Khyali Taal (8/8) — Lok Dohori, Adhunik Folk & Bhajan
+# Spoken rhyme (8 matras): १:धिङ  २:s  ३:ख  ४:ति  :  ५:ता  ६:क  ७:धि  ८:ना
+# Physical strokes:        १:घिं   २:X  ३:ख  ४:तां  :  ५:तक्  ६:घिं  ७:घिं  ८:तां
 # Uthaan (उठान): तां [घिं तां] तां [घिं तां] : तां [घिं तां] घिं तां
 # Kaat (काट):   १:घिं  २:तां  ३:तां  ४:घिं : ५:तां  ६:तां  ७:घिं  ८:तां
 @title: Traditional Khyali Taal
@@ -68,12 +72,12 @@ export const TAAL_PRESETS: TaalPreset[] = [
 [Uthaan]
 | >Taang [Ghin Taang] Taang [Ghin Taang] : Taang [Ghin Taang] Ghin Taang |
 
+[Laya Variation]
+| >Ghin - Kha Taang : Taang - Taang Ghin | x2
+
 [Kaat]
 | >Ghin Taang Taang Ghin : Taang Taang Ghin Taang |
-| >Ghin Taang - Taang : - - - - |
-
-[Laya Variation]
-| >Ghin - Kha Taang : Taang - Taang Ghin | x2`,
+| >Ghin Taang - Taang : Taak Ghin Ghin Taang |`,
   },
   {
     id: 'tamang-selo',
@@ -83,33 +87,34 @@ export const TAAL_PRESETS: TaalPreset[] = [
     defaultTempo: 140,
     region: 'Eastern & Central Himalayan Foothills (Sailung / Helambu)',
     description:
-      '4-count cycle: Ghin - Taak Ghin (घिं X तक् घिं — Beat 4 Ghin leads into Beat 1 Ghin across the barline for the signature "Taak Ghin-Ghin" double bass), with Kha-Taak roll and Kaat turnaround.',
+      'Brisk 4/4 Damphu & Madal rhythm: Ghin [Taak Ghin] Ghin [Taak Ghin] (घिं [तक् घिं] घिं [तक् घिं] — signature "Taak Ghin-Ghin" double-bass bounce), with Kha-Taak roll and Kaat turnaround.',
     source: `# Traditional Tamang Selo (4/4) — Damphu & Madal Rhythm
-# 4 Matras: १:घिं  २:X  ३:तक्  ४:घिं
-# Beat 4's open Ghin leads directly into Beat 1's Ghin across the barline ("Taak Ghin-Ghin")
-# Kaat (काट): [घिं घिं] [X घिं] तां घिं | तां घिं तां X
+# 4-count Selo cycle (घिं X तक् घिं) played two cycles per 4/4 bar:
+#   Beat 1: घिं (Ghin rings across 2 eighth-notes)
+#   Beat 2: [तक् घिं] ([Taak Ghin] leads into Beat 3 Ghin for the "Taak Ghin-Ghin" double bass)
+#   Beat 3: घिं (Ghin rings across 2 eighth-notes)
+#   Beat 4: [तक् घिं] ([Taak Ghin] leads into Beat 1 Ghin across the barline)
+# Kaat (काट): १:[घिं घिं]  २:[~ घिं]  ३:[तां घिं]  ४:[तां X]
 @title: Traditional Tamang Selo
 @taal: Tamang Selo
 @tempo: 140
 @meter: 4/4
 @region: Eastern & Central Himalayan Foothills (Sailung / Helambu)
 @tali: 1, 3
-@khali: 2
+@khali: 2, 4
 
 [Theka]
-| >Ghin - Taak Ghin | x4
+| >Ghin [Taak Ghin] >Ghin [Taak Ghin] | x4
 
 [Treble Response]
-| >Ghin - Taak Taang |
-| >Taang - Taak Ghin |
+| >Ghin [Taak Taang] >Taang [Taak Ghin] | x2
 
 [Kha-Taak Roll]
 | >Ghin [Kha Taak] [Kha Taang] Taang |
-| [Kha Taak] [Kha Ghin] >Ghin - |
+| [Kha Taak] [Kha Ghin] >Ghin [Taak Ghin] |
 
 [Kaat]
-| [>Ghin Ghin] [- Ghin] Taang Ghin |
-| >Taang Ghin Taang - |`,
+| [>Ghin Ghin] [~ Ghin] [Taang Ghin] [Taang -] |`,
   },
   {
     id: 'samala',
@@ -119,10 +124,11 @@ export const TAAL_PRESETS: TaalPreset[] = [
     defaultTempo: 100,
     region: 'Kathmandu Valley & Hill Folk Songs ("Resham Firiri")',
     description:
-      '4-count cycle: Ghin | [Kha Taang] | [Taak Ghin] | [Ghin Taang] (घिं [ख तां] [तक् घिं] [घिं तां]), with Kaat turnaround ([Ghin Taang] [Taang Taak] Taang -) and Laya variation.',
+      '4-count cycle: Ghin | [Kha Taang] | [Taak Ghin] | [Ghin Taang] (घिं [ख तां] [तक् घिं] [घिं तां]), with Rolling Uthaan ([Ghin Taang]x3 Dhang) and Kaat ([Ghin Taang] [Taang Ghin] Taang -).',
     source: `# Traditional Samala Taal (4/4)
 # 4 Matras (8 eighth-note subdivisions): १:घिं  २:[ख तां]  ३:[तक् घिं]  ४:[घिं तां]
-# Kaat (काट): १:[घिं तां]  २:[तां तक्]  ३:तां  ४:X
+# Rolling Uthaan (उठान): १:[घिं तां]  २:[घिं तां]  ३:[घिं तां]  ४:धां
+# Kaat (काट): १:[घिं तां]  २:[तां घिं]  ३:तां  ४:X
 @title: Traditional Samala Taal
 @taal: Samala
 @tempo: 100
@@ -134,12 +140,14 @@ export const TAAL_PRESETS: TaalPreset[] = [
 [Theka]
 | >Ghin [Kha Taang] [Taak Ghin] [Ghin Taang] | x4
 
-[Kaat]
-| [>Ghin Taang] [Taang Taak] Taang - | x2
-
 [Laya Variation]
 | [>Ghin Ghin] [Kha Taang] [Taak Ghin] [Ghin Taang] | x2
-| [>Ghin Taang] [Ghin Taang] [Ghin Taang] Dhang |`,
+
+[Rolling Uthaan]
+| [>Ghin Taang] [Ghin Taang] [Ghin Taang] Dhang |
+
+[Kaat]
+| [>Ghin Taang] [Taang Ghin] Taang - | x2`,
   },
   {
     id: 'maruni',
@@ -149,11 +157,11 @@ export const TAAL_PRESETS: TaalPreset[] = [
     defaultTempo: 104,
     region: 'Nepal (Maruni Dance & Folk Songs)',
     description:
-      '4-count cycle: Taang | [Kha Taang] | [Taang Ghin] | [Ghin Taang] (तां [ख तां] [तां घिं] [घिं तां]), with Purbeli variation (तां [ख तक्] [तां घिं] [घिं X]) and Kaat turnaround.',
+      '4-count cycle: Taang | [Kha Taang] | [Taang Ghin] | [Ghin Taang] (तां [ख तां] [तां घिं] [घिं तां]), with Purbeli variation (तां [ख तक्] [तां घिं] घिं) and rolling Kaat turnaround.',
     source: `# Traditional Maruni Taal (4/4)
 # 4 Matras (8 eighth-note subdivisions): १:तां  २:[ख तां]  ३:[तां घिं]  ४:[घिं तां]
-# Purbeli Variation: १:तां  २:[ख तक्]  ३:[तां घिं]  ४:[घिं X]
-# Kaat (काट): १:घिं  २:तां  ३:घिं  ४:तां  |  १:[तक् घिं]  २:तां  ३:[तक् घिं]  ४:तां
+# Purbeli Variation: १:तां  २:[ख तक्]  ३:[तां घिं]  ४:घिं
+# Kaat (काट): १:[घिं तां]  २:[घिं तां]  ३:[घिं तां]  ४:तां  |  १:[तक् घिं]  २:तां  ३:[तक् घिं]  ४:तां
 @title: Traditional Maruni Taal
 @taal: Maruni
 @tempo: 104
@@ -166,10 +174,10 @@ export const TAAL_PRESETS: TaalPreset[] = [
 | >Taang [Kha Taang] [Taang Ghin] [Ghin Taang] | x4
 
 [Purbeli Variation]
-| >Taang [Kha Taak] [Taang Ghin] [Ghin -] | x2
+| >Taang [Kha Taak] [Taang Ghin] Ghin | x2
 
 [Kaat]
-| >Ghin Taang Ghin Taang |
+| [>Ghin Taang] [Ghin Taang] [Ghin Taang] Taang |
 | [>Taak Ghin] Taang [Taak Ghin] Taang |`,
   },
   {
@@ -180,12 +188,12 @@ export const TAAL_PRESETS: TaalPreset[] = [
     defaultTempo: 120,
     region: 'Nepal (Sangini Songs, Deuda & Folk Dance)',
     description:
-      '6-count cycle: Ghin Ghin Taang : Taak Ghin Taang (घिं घिं तां : तक् घिं तां; spoken: घिं घिं ताङ । नकी घिं ताङ), with Prakar variations and Kaat turnaround.',
+      '6-count cycle: Ghin Ghin Taang : Taak Ghin Taang (घिं घिं तां : तक् घिं तां; spoken: घिं घिं ताङ । नकी घिं ताङ), with Prakar variations and rolling Kaat turnaround.',
     source: `# Traditional Sangini Taal (6/8)
 # 6 Matras, 2 Vibhags (3+3), 1 Tali (Beat 1), 1 Khali (Beat 4)
 # Spoken rhyme: १:घिं  २:घिं  ३:ताङ  :  ४:नकी  ५:घिं  ६:ताङ
 # Physical strokes: १:घिं  २:घिं  ३:तां  :  ४:तक्  ५:घिं  ६:तां
-# Kaat (काट): १:[घिं घिं]  २:[X घिं]  ३:[तां घिं]  :  ४:तां  ५:घिं  ६:तां
+# Kaat (काट): १:[घिं घिं]  २:[~ घिं]  ३:[तां घिं]  :  ४:[तां घिं]  ५:तां  ६:X
 @title: Traditional Sangini Taal
 @taal: Sangini
 @tempo: 120
@@ -203,8 +211,7 @@ export const TAAL_PRESETS: TaalPreset[] = [
 | >Ghin Taang Taang : Taak Taang Taang | x2
 
 [Kaat]
-| [>Ghin Ghin] [- Ghin] [Taang Ghin] : Taang Ghin Taang |
-| >Taang Ghin Taang : Ghin Taang - |`,
+| [>Ghin Ghin] [~ Ghin] [Taang Ghin] : [Taang Ghin] Taang - |`,
   },
   {
     id: 'dadra-chudka',
@@ -214,13 +221,13 @@ export const TAAL_PRESETS: TaalPreset[] = [
     defaultTempo: 148,
     region: 'Gandaki Heartland, Nepal (Kauda, Chudka & Roila Bhajan)',
     description:
-      '6-count cycle: Ghin Ghin Taang : Kha Ghin Taang (घिं घिं तां : ख घिं तां; spoken: घिं घि ना खत् घि ना) and Drut Chudka (तक् घिं तां : तक् घिं तां), with Dhang Uthaan pickup and Kaat.',
+      '6-count cycle: Ghin Ghin Taang : Kha Ghin Taang (घिं घिं तां : ख घिं तां; spoken: घिं घि ना खत् घि ना), Dhang Uthaan pickup, Drut Chudka (तक् घिं तां : तक् घिं तां), and Kaat.',
     source: `# Traditional Chudka / Kauda Taal (6/8)
 # Spoken rhyme (6 matras): १:घिं  २:घि  ३:ना  :  ४:खत्  ५:घि  ६:ना
 # Physical strokes:        १:घिं  २:घिं  ३:तां  :  ४:ख   ५:घिं  ६:तां
+# Uthaan (उठान): १:तक्  २:धां  ३:तक्  :  ४:धां  ५:घिं  ६:तां
 # Drut (Fast) Chudka:      १:तक्  २:घिं  ३:तां  :  ४:तक्  ५:घिं  ६:तां  (spoken: ताक घिना ताक घिना)
-# Uthaan (उठान): घिं घिं तां : घिं घिं तां | तक् धां तक् : धां घिं तां
-# Kaat (काट):   तां घिं तां : घिं तां X
+# Kaat (काट):   १:तां  २:घिं  ३:तां  :  ४:घिं  ५:तां  ६:X
 @title: Traditional Chudka / Kauda Taal
 @taal: Chudka
 @tempo: 148
@@ -232,17 +239,14 @@ export const TAAL_PRESETS: TaalPreset[] = [
 [Theka]
 | >Ghin Ghin Taang : Kha Ghin Taang | x4
 
+[Uthaan]
+| >Taak Dhang Taak : Dhang Ghin Taang |
+
 [Drut Chudka]
 | >Taak Ghin Taang : Taak Ghin Taang | x4
 
-[Uthaan]
-| >Ghin Ghin Taang : Ghin Ghin Taang |
-| >Taak Dhang Taak : Dhang Ghin Taang |
-| >Taak Dhang Dhang : Taak Dhang Dhang |
-
 [Kaat]
-| >Taang Ghin Taang : Ghin Taang - |
-| >Ghin Ghin Ghin : Ghin Taang - |`,
+| >Taang Ghin Taang : Ghin Taang - |`,
   },
 ];
 

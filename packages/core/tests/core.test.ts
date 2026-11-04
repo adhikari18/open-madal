@@ -136,7 +136,8 @@ describe('@open-madal/core parser & AST', () => {
     expect(thekaBeats[4].bhale?.articulation).toBe('open');
     expect(thekaBeats[5].pothi?.articulation).toBe('open');
 
-    const kaatBeats = ast.sections[1].bars[0].beats.map((b) => b.subdivisions[0]);
+    const kaatSection = ast.sections.find((s) => s.name === 'Kaat')!;
+    const kaatBeats = kaatSection.bars[0].beats.map((b) => b.subdivisions[0]);
     // Kaat: 1:Taang, 2:Ghin, 3:Taang, 4:Ghin, 5:Taang, 6:- (rest)
     expect(kaatBeats.map((t) => t.bol)).toEqual(['Tin', 'Ghe', 'Tin', 'Ghe', 'Tin', '-']);
   });
@@ -170,7 +171,8 @@ describe('@open-madal/core parser & AST', () => {
     expect(thekaBeats[7].pothi?.articulation).toBe('open');
 
     // Kaat section: | >Ghin Taang Taang Ghin : Taang Taang Ghin Taang |
-    const kaatBeats = ast.sections[2].bars[0].beats.map((b) => b.subdivisions[0]);
+    const kaatSection = ast.sections.find((s) => s.name === 'Kaat')!;
+    const kaatBeats = kaatSection.bars[0].beats.map((b) => b.subdivisions[0]);
     expect(kaatBeats.map((t) => t.bol)).toEqual([
       'Ghe',
       'Tin',
@@ -184,14 +186,14 @@ describe('@open-madal/core parser & AST', () => {
   });
 
   it('compiles Tamang Selo, Samala, Maruni, Sangini, and Chudka/Kauda presets with authentic physical strokes', () => {
-    // 1. Tamang Selo (4/4): | >Ghin - Taak Ghin |
+    // 1. Tamang Selo (4/4): | >Ghin [Taak Ghin] >Ghin [Taak Ghin] |
     const selo = parseMadalCode(TAAL_PRESETS.find((p) => p.id === 'tamang-selo')!.source);
     expect(selo.metadata.meter).toEqual({ beatsPerBar: 4, beatUnit: 4 });
-    expect(selo.sections[0].bars[0].beats.map((b) => b.subdivisions[0].bol)).toEqual([
-      'Ghe',
-      '-',
-      'Ki',
-      'Ghe',
+    expect(selo.sections[0].bars[0].beats.map((b) => b.subdivisions.map((s) => s.bol))).toEqual([
+      ['Ghe'],
+      ['Ki', 'Ghe'],
+      ['Ghe'],
+      ['Ki', 'Ghe'],
     ]);
 
     // 2. Samala (4/4): | >Ghin [Kha Taang] [Taak Ghin] [Ghin Taang] |
@@ -202,6 +204,13 @@ describe('@open-madal/core parser & AST', () => {
       ['Ka', 'Tin'],
       ['Ki', 'Ghe'],
       ['Ghe', 'Tin'],
+    ]);
+    const samalaKaat = samala.sections.find((s) => s.name === 'Kaat')!;
+    expect(samalaKaat.bars[0].beats.map((b) => b.subdivisions.map((s) => s.bol))).toEqual([
+      ['Ghe', 'Tin'],
+      ['Tin', 'Ghe'],
+      ['Tin'],
+      ['-'],
     ]);
 
     // 3. Maruni (4/4): | >Taang [Kha Taang] [Taang Ghin] [Ghin Taang] |
@@ -225,6 +234,15 @@ describe('@open-madal/core parser & AST', () => {
       'Ghe',
       'Tin',
     ]);
+    const sanginiKaat = sangini.sections.find((s) => s.name === 'Kaat')!;
+    expect(sanginiKaat.bars[0].beats.map((b) => b.subdivisions.map((s) => s.bol))).toEqual([
+      ['Ghe', 'Ghe'],
+      ['~', 'Ghe'],
+      ['Tin', 'Ghe'],
+      ['Tin', 'Ghe'],
+      ['Tin'],
+      ['-'],
+    ]);
 
     // 5. Chudka / Kauda (6/8): Theka | >Ghin Ghin Taang : Kha Ghin Taang | & Drut | >Taak Ghin Taang : Taak Ghin Taang |
     const chudka = parseMadalCode(TAAL_PRESETS.find((p) => p.id === 'dadra-chudka')!.source);
@@ -237,7 +255,8 @@ describe('@open-madal/core parser & AST', () => {
       'Ghe',
       'Tin',
     ]);
-    expect(chudka.sections[1].bars[0].beats.map((b) => b.subdivisions[0].bol)).toEqual([
+    const drutSection = chudka.sections.find((s) => s.name === 'Drut Chudka')!;
+    expect(drutSection.bars[0].beats.map((b) => b.subdivisions[0].bol)).toEqual([
       'Ki',
       'Ghe',
       'Tin',

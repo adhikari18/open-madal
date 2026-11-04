@@ -1,6 +1,7 @@
 # Traditional Samala Taal (4/4)
 # 4 Matras (8 eighth-note subdivisions): १:घिं  २:[ख तां]  ३:[तक् घिं]  ४:[घिं तां]
-# Kaat (काट): १:[घिं तां]  २:[तां तक्]  ३:तां  ४:X
+# Rolling Uthaan (उठान): १:[घिं तां]  २:[घिं तां]  ३:[घिं तां]  ४:धां
+# Kaat (काट): १:[घिं तां]  २:[तां घिं]  ३:तां  ४:X
 @title: Traditional Samala Taal
 @taal: Samala
 @tempo: 100
@@ -12,9 +13,11 @@
 [Theka]
 | >Ghin [Kha Taang] [Taak Ghin] [Ghin Taang] | x4
 
-[Kaat]
-| [>Ghin Taang] [Taang Taak] Taang - | x2
-
 [Laya Variation]
 | [>Ghin Ghin] [Kha Taang] [Taak Ghin] [Ghin Taang] | x2
+
+[Rolling Uthaan]
 | [>Ghin Taang] [Ghin Taang] [Ghin Taang] Dhang |
+
+[Kaat]
+| [>Ghin Taang] [Taang Ghin] Taang - | x2

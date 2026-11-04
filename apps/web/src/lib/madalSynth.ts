@@ -182,7 +182,10 @@ const MODAL_PROFILES: Record<ModalProfileId, ModalProfile> = {
 
 interface ActiveVoice {
   gain: GainNode;
+  startAt: number;
   stopAt: number;
+  amp: number;
+  src?: AudioBufferSourceNode;
 }
 
 /** Players sit facing the drum: bass head on the left, treble head on the right. */
@@ -196,6 +199,8 @@ export class MadalAudioEngine {
   private samples: Partial<Record<SampleId, AudioBuffer>> = {};
   private samplesPromise: Promise<void> | null = null;
   private activeVoices: Record<'bhale' | 'pothi', ActiveVoice[]> = { bhale: [], pothi: [] };
+  private pothiOpenToggle = 0;
+  private bhaleOpenToggle = 0;
 
   /**
    * Fetch and decode the madal recordings. Safe to call before any user gesture: decoding
@@ -321,18 +326,33 @@ export class MadalAudioEngine {
   public triggerHeadStroke(spec: HeadStrokeSpec, when?: number, velocity = 100): void {
     const ctx = this.ensureContext();
     const now = Math.max(when ?? ctx.currentTime, ctx.currentTime);
-    const voice = resolveVoice(spec);
+    const baseVoice = resolveVoice(spec);
+    const isClosed = spec.articulation === 'closed';
+
+    // Alternate between the two open Taang recordings on consecutive open Pothi strokes
+    // so rapid treble rolls (Taang-Taang, Diri-Diri) never repeat an identical waveform.
+    let sampleId: SampleId = baseVoice.sample;
+    if (spec.head === 'pothi' && !isClosed && this.samples['taang'] && this.samples['taang-2']) {
+      sampleId = this.pothiOpenToggle % 2 === 0 ? 'taang' : 'taang-2';
+      this.pothiOpenToggle = (this.pothiOpenToggle + 1) % 2;
+    }
+    const voice: StrokeVoice = { ...baseVoice, sample: sampleId };
+
     const vel = Math.max(1, Math.min(127, velocity)) / 127;
 
-    // Hand-played dynamics: loudness and brightness follow velocity, with small human variance
-    const humanGain = 1 + (Math.random() - 0.5) * 0.12;
-    const amp = voice.gain * Math.pow(vel, 1.4) * humanGain;
-    const brightnessHz = 1400 + Math.pow(vel, 1.6) * 9000;
-    const humanDetune = 1 + (Math.random() - 0.5) * 0.006;
+    // Hand-played dynamics: loudness and brightness follow velocity, with subtle human variance
+    const humanGain = 1 + (Math.random() - 0.5) * 0.08;
+    const amp = voice.gain * Math.pow(vel, 1.35) * humanGain;
+    const brightnessHz = 1600 + Math.pow(vel, 1.5) * 9000;
+    // Slight micro-pitch alternation on consecutive open bass strokes prevents phase comb-filtering in rolls
+    const rollMicroDetune =
+      spec.head === 'bhale' && !isClosed
+        ? ((this.bhaleOpenToggle = (this.bhaleOpenToggle + 1) % 2) === 0 ? 1.002 : 0.998)
+        : 1;
+    const humanDetune = rollMicroDetune * (1 + (Math.random() - 0.5) * 0.004);
 
-    // A new stroke on a head stops that head's previous ring: fingers touch the same skin.
-    const isClosed = spec.articulation === 'closed';
-    this.chokeHead(spec.head, now, isClosed ? 0.006 : 0.025);
+    // A new stroke on a head stops that head's previous ring as the fingers land on the skin.
+    this.chokeHead(spec.head, now, isClosed ? 0.008 : 0.014);
 
     const length = Math.max(0.05, spec.decaySec);
     const buffer = this.samples[voice.sample];
@@ -394,11 +414,22 @@ export class MadalAudioEngine {
     src.stop(now + 0.035);
   }
 
-  private chokeHead(head: 'bhale' | 'pothi', at: number, timeConstant: number): void {
+  private chokeHead(head: 'bhale' | 'pothi', at: number, fadeDuration: number): void {
     for (const v of this.activeVoices[head]) {
       if (v.stopAt <= at) continue;
-      v.gain.gain.cancelScheduledValues(at);
-      v.gain.gain.setTargetAtTime(0, at, timeConstant);
+      const chokeStart = Math.max(at, v.startAt + 0.004);
+      const chokeEnd = chokeStart + fadeDuration;
+      v.gain.gain.cancelScheduledValues(chokeStart);
+      v.gain.gain.setValueAtTime(v.amp, chokeStart);
+      v.gain.gain.linearRampToValueAtTime(0.0001, chokeEnd);
+      v.stopAt = chokeEnd;
+      if (v.src) {
+        try {
+          v.src.stop(chokeEnd + 0.005);
+        } catch {
+          // Ignore if already stopped
+        }
+      }
     }
     this.activeVoices[head] = [];
   }
@@ -417,13 +448,13 @@ export class MadalAudioEngine {
     const src = ctx.createBufferSource();
     src.buffer = buffer;
 
-    // Retune the recording to the stroke's pitch (e.g. Naa sits ~3 semitones above Taang)
+    // Retune the recording to the stroke's fundamental frequency
     const rate = (spec.fundamentalHz / SAMPLE_FUNDAMENTAL_HZ[voice.sample]) * humanDetune;
     src.playbackRate.setValueAtTime(rate, now);
     if (spec.articulation === 'pitch-bend') {
-      // Pressing the heel into the skin raises tension: gentle upward glide, then settle
-      src.playbackRate.linearRampToValueAtTime(rate * 1.07, now + 0.22);
-      src.playbackRate.linearRampToValueAtTime(rate * 1.05, now + Math.min(length, 0.9));
+      // Subtle hand-pressure inflection on the large head
+      src.playbackRate.linearRampToValueAtTime(rate * 1.022, now + 0.16);
+      src.playbackRate.linearRampToValueAtTime(rate * 1.008, now + Math.min(length, 0.7));
     }
 
     const tone = ctx.createBiquadFilter();
@@ -432,14 +463,14 @@ export class MadalAudioEngine {
     tone.Q.value = 0.5;
 
     const naturalLength = buffer.duration / rate;
-    const stopAt = now + Math.min(length, naturalLength);
+    const isExplicitlyDamped = length <= 0.15;
+    const stopAt = now + (isExplicitlyDamped ? Math.min(length, naturalLength) : naturalLength);
     const gain = ctx.createGain();
+    gain.gain.value = 0;
     gain.gain.setValueAtTime(amp, now);
-    if (length < naturalLength) {
-      // Shortened ring (lighter stroke or damped `.` modifier): fade over the last part
-      const fade = Math.min(0.06, length * 0.4);
-      gain.gain.setValueAtTime(amp, stopAt - fade);
-      gain.gain.linearRampToValueAtTime(0, stopAt);
+    if (isExplicitlyDamped) {
+      // Explicitly damped modifier (.): smooth fast hand-mute decay
+      gain.gain.setTargetAtTime(0.0001, now + 0.015, 0.025);
     }
 
     src.connect(tone);
@@ -447,7 +478,7 @@ export class MadalAudioEngine {
     gain.connect(this.headBus[spec.head]!);
     src.start(now);
     src.stop(stopAt + 0.02);
-    return { gain, stopAt };
+    return { gain, startAt: now, stopAt, amp, src };
   }
 
   private playModal(
@@ -463,8 +494,10 @@ export class MadalAudioEngine {
     const profile = MODAL_PROFILES[voice.modal];
     const f0 = spec.fundamentalHz * humanDetune;
     const bus = this.headBus[spec.head]!;
+    const effectiveAmp = amp * 0.55;
     const voiceGain = ctx.createGain();
-    voiceGain.gain.value = amp * 0.55;
+    voiceGain.gain.value = 0;
+    voiceGain.gain.setValueAtTime(effectiveAmp, now);
     voiceGain.connect(bus);
 
     const stopAt = now + length;
@@ -479,8 +512,8 @@ export class MadalAudioEngine {
       osc.frequency.setValueAtTime(freq * 1.006, now);
       osc.frequency.exponentialRampToValueAtTime(freq, now + 0.03);
       if (spec.articulation === 'pitch-bend') {
-        osc.frequency.linearRampToValueAtTime(freq * 1.07, now + 0.22);
-        osc.frequency.linearRampToValueAtTime(freq * 1.05, now + Math.min(length, 0.9));
+        osc.frequency.linearRampToValueAtTime(freq * 1.022, now + 0.16);
+        osc.frequency.linearRampToValueAtTime(freq * 1.008, now + Math.min(length, 0.7));
       }
 
       const g = ctx.createGain();
@@ -514,6 +547,6 @@ export class MadalAudioEngine {
       n.stop(now + 0.03);
     }
 
-    return { gain: voiceGain, stopAt };
+    return { gain: voiceGain, startAt: now, stopAt, amp: effectiveAmp };
   }
 }

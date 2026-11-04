@@ -1,4 +1,4 @@
-import { expandOrnamentalRoll, resolveBol } from './bols.js';
+import { BOL_DICTIONARY, expandOrnamentalRoll, resolveBol } from './bols.js';
 import { addRational, createRational, divideRationalByInt, rationalToNumber } from './rational.js';
 import {
   BarNode,
@@ -622,11 +622,18 @@ export function flattenTimeline(ast: MadalProgramAST): FlattenedTimelineEvent[] 
             const rationalDuration = token.rationalDuration ?? createRational(1, totalSubs);
             const beatOffset = rationalToNumber(currentRationalOffset);
             const durationBeats = rationalToNumber(rationalDuration);
-            const baseVelocity = token.bol === '-' || token.bol === '~' ? 0 : 100;
+            const bolDef = BOL_DICTIONARY[token.bol];
+            const rawBaseVelocity =
+              token.bol === '-' || token.bol === '~' ? 0 : (bolDef?.defaultVelocity ?? 100);
+            // Natural hand rebound dynamics inside multi-stroke subdivisions / rolls
+            const baseVelocity =
+              rawBaseVelocity > 0 && totalSubs > 1 && s > 0 && !token.modifiers.accent
+                ? Math.max(60, Math.round(rawBaseVelocity * (s % 2 === 1 ? 0.9 : 0.95)))
+                : rawBaseVelocity;
             const accentedVelocity = token.modifiers.accent
-              ? Math.min(127, baseVelocity + 22)
+              ? Math.min(127, baseVelocity + 18)
               : beatCell.beatNumber === 1 && s === 0
-              ? Math.min(127, baseVelocity + 12)
+              ? Math.min(127, baseVelocity + 10)
               : baseVelocity;
 
             events.push({

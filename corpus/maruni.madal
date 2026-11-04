@@ -1,7 +1,7 @@
 # Traditional Maruni Taal (4/4)
 # 4 Matras (8 eighth-note subdivisions): १:तां  २:[ख तां]  ३:[तां घिं]  ४:[घिं तां]
-# Purbeli Variation: १:तां  २:[ख तक्]  ३:[तां घिं]  ४:[घिं X]
-# Kaat (काट): १:घिं  २:तां  ३:घिं  ४:तां  |  १:[तक् घिं]  २:तां  ३:[तक् घिं]  ४:तां
+# Purbeli Variation: १:तां  २:[ख तक्]  ३:[तां घिं]  ४:घिं
+# Kaat (काट): १:[घिं तां]  २:[घिं तां]  ३:[घिं तां]  ४:तां  |  १:[तक् घिं]  २:तां  ३:[तक् घिं]  ४:तां
 @title: Traditional Maruni Taal
 @taal: Maruni
 @tempo: 104
@@ -14,8 +14,8 @@
 | >Taang [Kha Taang] [Taang Ghin] [Ghin Taang] | x4
 
 [Purbeli Variation]
-| >Taang [Kha Taak] [Taang Ghin] [Ghin -] | x2
+| >Taang [Kha Taak] [Taang Ghin] Ghin | x2
 
 [Kaat]
-| >Ghin Taang Ghin Taang |
+| [>Ghin Taang] [Ghin Taang] [Ghin Taang] Taang |
 | [>Taak Ghin] Taang [Taak Ghin] Taang |

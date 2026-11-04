@@ -1,31 +1,33 @@
 # Traditional Jhyaure Taal (6/8) — Lok Dohori & Hill Folk Songs
 #
-# 6-Matra Cycle (१ २ ३ ४ ५ ६):
+# 6-Matra Cycle (१ २ ३ : ४ ५ ६), 2 Vibhags (3+3), Tali on 1, Khali on 4:
 #   Beat 1 (१): घिं (Ghin)  — open stroke on the large head (bhale)
-#   Beat 2 (२): X   (-)     — rest; Beat 1's Ghin rings across Beat 2
+#   Beat 2 (२): X   (-)     — sustain/rest; Beat 1's Ghin rings across Beat 2
 #   Beat 3 (३): तां (Taang) — open index-finger stroke on the small head (pothi)
 #   Beat 4 (४): तक् (Taak)  — closed 3-finger stroke on the small head (pothi)
 #   Beat 5 (५): घिं (Ghin)  — open stroke on the large head (bhale)
 #   Beat 6 (६): तां (Taang) — open index-finger stroke on the small head (pothi)
 #
-# Kaat / Turnaround (काट — १ २ ३ ४ ५ ६):
-#   तां घिं तां घिं तां X  (Beat 6 is silent)
+# Kaat / Turnaround (काट — १ २ ३ : ४ ५ ६):
+#   १:तां  २:घिं  ३:तां  :  ४:घिं  ५:तां  ६:X
 @title: Traditional Jhyaure Taal
 @taal: Jhyaure
 @tempo: 180
 @meter: 6/8
 @region: Nepal (Lok Dohori & Hill Folk Songs)
-@tali: 1, 4
-@khali: 2
+@tali: 1
+@khali: 4
 
 [Theka]
 | >Ghin - Taang : Taak Ghin Taang | x4
 
+[Rolling Variation]
+| >Ghin Ghin Taang : Taak Ghin Taang | x2
+| >Ghin - Taang : Ghin Ghin Taang | x2
+
 [Kaat]
-| >Taang Ghin Taang : Ghin Taang - | x2
+| >Taang Ghin Taang : Ghin Taang - |
 
 [Lekali He Choyako Doko]
 | >Ghin - Taang : Taak Ghin Taang | x3
 | >Taang Ghin Taang : Ghin Taang - |
-
-

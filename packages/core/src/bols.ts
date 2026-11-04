@@ -48,7 +48,7 @@ const POTHI_OPEN: HeadStrokeSpec = {
   articulation: 'open',
   midiNote: 64,
   fundamentalHz: 266,
-  decaySec: 0.45,
+  decaySec: 0.85,
 };
 
 const POTHI_RING: HeadStrokeSpec = {
@@ -91,8 +91,8 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'ग',
     head: 'bhale',
     articulation: 'open',
-    description: 'Lighter, shorter open Ghin on the large head.',
-    bhale: { ...BHALE_OPEN, stroke: 'Ga', decaySec: 0.5 },
+    description: 'Lighter open Ghin on the large head.',
+    bhale: { ...BHALE_OPEN, stroke: 'Ga', decaySec: 0.9 },
     defaultVelocity: 88,
   },
   Dhum: {
@@ -102,7 +102,7 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     head: 'bhale',
     articulation: 'open',
     description: 'Full-strength open Ghin on the large head, allowed to ring out completely.',
-    bhale: { ...BHALE_OPEN, stroke: 'Dhum', fundamentalHz: 172, decaySec: 1.9 },
+    bhale: { ...BHALE_OPEN, stroke: 'Dhum', fundamentalHz: 174, decaySec: 1.9 },
     defaultVelocity: 115,
   },
   Ka: {
@@ -145,8 +145,8 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     head: 'pothi',
     articulation: 'rim',
     description:
-      'Naa (ना): a lighter open stroke on the small head that sounds about three semitones above Taang.',
-    pothi: { ...POTHI_RIM, stroke: 'Na', fundamentalHz: 313, decaySec: 0.6 },
+      'Naa (ना): lighter open index-finger stroke near the rim of the small head.',
+    pothi: { ...POTHI_RIM, stroke: 'Na', fundamentalHz: 268, decaySec: 1.0 },
     defaultVelocity: 92,
   },
   Ti: {
@@ -155,7 +155,7 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'ति',
     head: 'pothi',
     articulation: 'open',
-    description: 'Light, short open Taang on the small head (used inside fast phrases).',
+    description: 'Light, agile open Taang on the small head (used inside fast phrases and rolls).',
     pothi: POTHI_OPEN,
     defaultVelocity: 96,
   },
@@ -175,9 +175,9 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'र',
     head: 'pothi',
     articulation: 'closed',
-    description: 'Rapid finger-rebound stroke on the Pothi head used in Tirakita ornamental rolls.',
-    pothi: { ...POTHI_CLOSED, stroke: 'Ra', fundamentalHz: 275, decaySec: 0.12 },
-    defaultVelocity: 88,
+    description: 'Rapid closed three-finger rebound stroke (Taak) on the Pothi head used in Tirakita rolls.',
+    pothi: { ...POTHI_CLOSED, stroke: 'Ra', fundamentalHz: 267, decaySec: 0.25 },
+    defaultVelocity: 86,
   },
   Di: {
     id: 'Di',
@@ -186,8 +186,8 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     head: 'both',
     articulation: 'open',
     description: 'Rapid alternating roll lead stroke combining Bhale and Pothi open resonance (Diri-Diri).',
-    bhale: { ...BHALE_OPEN, stroke: 'Di', decaySec: 0.25 },
-    pothi: { ...POTHI_OPEN, stroke: 'Di', decaySec: 0.22 },
+    bhale: { ...BHALE_OPEN, stroke: 'Di', decaySec: 1.1 },
+    pothi: { ...POTHI_OPEN, stroke: 'Di', decaySec: 0.9 },
     defaultVelocity: 98,
   },
   Ri: {
@@ -196,8 +196,8 @@ export const BOL_DICTIONARY: Record<CanonicalBolId, BolDefinition> = {
     devanagari: 'रि',
     head: 'pothi',
     articulation: 'rim',
-    description: 'Crisp Pothi rebound stroke paired with Di in rapid Diri-Diri rolls.',
-    pothi: { ...POTHI_RIM, stroke: 'Ri', fundamentalHz: 313, decaySec: 0.14 },
+    description: 'Crisp Pothi open rebound stroke paired with Di in rapid Diri-Diri rolls.',
+    pothi: { ...POTHI_RIM, stroke: 'Ri', fundamentalHz: 266, decaySec: 0.9 },
     defaultVelocity: 90,
   },
   Dha: {
