@@ -87,25 +87,66 @@ export const TAAL_PRESETS: TaalPreset[] = [
     id: 'samala',
     name: 'Samala Taal',
     devanagariName: 'समला ताल',
-    meter: '8/8',
-    defaultTempo: 126,
-    region: 'Western Hills (Kaski, Syangja, Tanahun)',
+    meter: '4/4',
+    defaultTempo: 100,
+    region: 'Kathmandu Valley (popular among Newars); used for "Resham Firiri"',
     description:
-      'Lively 8-beat western hill rhythm characterized by open ringing Pothi strokes followed by resonant Bhale heel bends.',
-    source: `# Samala Taal (8/8)
-@title: Samala Western Hill Taal
+      'Simple 4-count cycle: Ghin | Kha-Taang | Taak-Ghin | Ghin-Taang. Notation as taught by Raju Maharjan (Kutumba), The Kathmandu Post, 6 Mar 2020.',
+    source: `# Samala Taal (4 counts) — as taught by Raju Maharjan of Kutumba
+# Source: The Kathmandu Post, 2020-03-06, "Ghin-Kha-Taang-Taak-Ghin-Ghin-Taang: It's that simple"
+@title: Samala Taal (Resham Firiri)
 @taal: Samala
-@tempo: 126
-@meter: 8/8
-@region: Western Hills, Nepal
-@tali: 1, 5
-@khali: 4
+@tempo: 100
+@meter: 4/4
+@region: Kathmandu Valley, Nepal
+@tali: 1, 3
+@khali: 2
 
 [Theka]
-| >Dhin - Ti Ta : >Ghe^ Tin Ta - | x2
+| >Ghin [Kha Taang] [Taak Ghin] [Ghin Taang] | x4`,
+  },
+  {
+    id: 'maruni',
+    name: 'Maruni Taal',
+    devanagariName: 'मारुनी ताल',
+    meter: '4/4',
+    defaultTempo: 104,
+    region: 'Pan-Nepali (Maruni dance)',
+    description:
+      '4-count cycle: Taang | Kha-Taang | Taang-Ghin | Ghin-Taang. Notation as taught by Raju Maharjan (Kutumba), The Kathmandu Post, 6 Mar 2020.',
+    source: `# Maruni Taal (4 counts) — as taught by Raju Maharjan of Kutumba
+# Source: The Kathmandu Post, 2020-03-06
+@title: Maruni Taal
+@taal: Maruni
+@tempo: 104
+@meter: 4/4
+@region: Nepal
+@tali: 1, 3
+@khali: 2
 
-[Variation]
-| >Dhin [Ti Ta] Ka Ta : >Dhing Tin [Ta Ki] - |`,
+[Theka]
+| >Taang [Kha Taang] [Taang Ghin] [Ghin Taang] | x4`,
+  },
+  {
+    id: 'sangini',
+    name: 'Sangini Taal',
+    devanagariName: 'सङ्गिनी ताल',
+    meter: '6/8',
+    defaultTempo: 120,
+    region: 'Nepal (Sangini songs and dance)',
+    description:
+      '6-count cycle: Ghin Ghin Taang Taak Ghin Taang. Notation as taught by Raju Maharjan (Kutumba), The Kathmandu Post, 6 Mar 2020.',
+    source: `# Sangini Taal (6 counts) — as taught by Raju Maharjan of Kutumba
+# Source: The Kathmandu Post, 2020-03-06
+@title: Sangini Taal
+@taal: Sangini
+@tempo: 120
+@meter: 6/8
+@region: Nepal
+@tali: 1, 4
+
+[Theka]
+| >Ghin Ghin Taang : Taak Ghin Taang | x4`,
   },
   {
     id: 'dadra-chudka',

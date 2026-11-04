@@ -89,7 +89,7 @@ open-madal/
 │   └── cli/           # @open-madal/cli  — Command-line compiler & Taal inspector
 ├── apps/
 │   └── web/           # @open-madal/web  — Next.js + Web Audio interactive sequencer & clock
-├── corpus/            # Canonical .madal notation files (Jhyaure, Khyali, Tamang Selo, Samala, Chudka)
+├── corpus/            # Canonical .madal notation files (Jhyaure, Khyali, Tamang Selo, Samala, Maruni, Sangini, Chudka)
 ├── ROADMAP.md         # Detailed milestone roadmap & planned features
 ├── CONTRIBUTING.md    # Guidelines for adding regional Taals and compiler features
 └── LICENSE            # MIT License
