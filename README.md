@@ -77,7 +77,7 @@ The compiler accepts both canonical *bols* and regional oral aliases (such as `G
 | **`Dhing`** | — | धिङ | **Both** (`Ghe^` + `Tin`) | Pitch-Bend | Bass strike with palm-heel pressure pitch-slide + `Tin` |
 | **`-`** / **`~`** | — | ऽ / 〜 | None | Rest / Sustain | Silent pause (`-`) or let previous stroke ring (`~`) |
 
-> **Head names vary by teacher.** The [Nepali Wikipedia](https://ne.wikipedia.org/wiki/मादल) calls the larger head *bhale* and the smaller *pothi* (that is what this project uses). Raju Maharjan of Kutumba ([Kathmandu Post, 2020](https://kathmandupost.com/weekender/2020/03/06/ghin-kha-taang-taak-ghin-ghin-taang-it-s-that-simple)) uses the opposite: *bhale* on the right, where *Taang* is played. The stroke names do not change, only the head labels. See [`docs/madal-acoustics.md`](docs/madal-acoustics.md) for the sound research behind the web engine.
+> **Head names vary by teacher.** The [Nepali Wikipedia](https://ne.wikipedia.org/wiki/मादल) calls the larger head *bhale* and the smaller *pothi* (that is what this project uses). Other teachers use the opposite convention (*bhale* on the right, where *Taang* is played). The stroke names do not change, only the head labels. See [`docs/madal-acoustics.md`](docs/madal-acoustics.md) for the sound research behind the web engine.
 
 ---
 

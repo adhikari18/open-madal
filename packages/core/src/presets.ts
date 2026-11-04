@@ -96,9 +96,8 @@ export const TAAL_PRESETS: TaalPreset[] = [
     defaultTempo: 100,
     region: 'Kathmandu Valley (popular among Newars); used for "Resham Firiri"',
     description:
-      'Simple 4-count cycle: Ghin | Kha-Taang | Taak-Ghin | Ghin-Taang. Notation as taught by Raju Maharjan (Kutumba), The Kathmandu Post, 6 Mar 2020.',
-    source: `# Samala Taal (4 counts) — as taught by Raju Maharjan of Kutumba
-# Source: The Kathmandu Post, 2020-03-06, "Ghin-Kha-Taang-Taak-Ghin-Ghin-Taang: It's that simple"
+      'Simple 4-count cycle: Ghin | Kha-Taang | Taak-Ghin | Ghin-Taang.',
+    source: `# Samala Taal (4 counts)
 @title: Samala Taal (Resham Firiri)
 @taal: Samala
 @tempo: 100
@@ -118,9 +117,8 @@ export const TAAL_PRESETS: TaalPreset[] = [
     defaultTempo: 104,
     region: 'Pan-Nepali (Maruni dance)',
     description:
-      '4-count cycle: Taang | Kha-Taang | Taang-Ghin | Ghin-Taang. Notation as taught by Raju Maharjan (Kutumba), The Kathmandu Post, 6 Mar 2020.',
-    source: `# Maruni Taal (4 counts) — as taught by Raju Maharjan of Kutumba
-# Source: The Kathmandu Post, 2020-03-06
+      '4-count cycle: Taang | Kha-Taang | Taang-Ghin | Ghin-Taang.',
+    source: `# Maruni Taal (4 counts)
 @title: Maruni Taal
 @taal: Maruni
 @tempo: 104
@@ -140,9 +138,8 @@ export const TAAL_PRESETS: TaalPreset[] = [
     defaultTempo: 120,
     region: 'Nepal (Sangini songs and dance)',
     description:
-      '6-count cycle: Ghin Ghin Taang Taak Ghin Taang. Notation as taught by Raju Maharjan (Kutumba), The Kathmandu Post, 6 Mar 2020.',
-    source: `# Sangini Taal (6 counts) — as taught by Raju Maharjan of Kutumba
-# Source: The Kathmandu Post, 2020-03-06
+      '6-count cycle: Ghin Ghin Taang Taak Ghin Taang.',
+    source: `# Sangini Taal (6 counts)
 @title: Sangini Taal
 @taal: Sangini
 @tempo: 120

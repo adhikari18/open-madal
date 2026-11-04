@@ -260,7 +260,7 @@ const CASE_INSENSITIVE_BOL_LOOKUP = new Map<string, CanonicalBolId>(
 /**
  * Regional oral dialect aliases that normalize to CanonicalBolId in the Open-Madal Specification.
  *
- * Includes the stroke names used in madal teaching (Kutumba / Raju Maharjan, Kathmandu Post 2020):
+ * Includes the stroke names used in madal teaching:
  * Taang (open treble), Taak (closed treble), Ghin (open bass), Kha (closed bass), and
  * Dhang (Taang + Ghin). Note that Taak is a closed stroke on the khari, so it maps to Ki, not Ta.
  */

@@ -7,12 +7,11 @@ pitches and ring lengths in `packages/core/src/bols.ts`.
 
 | Source | What it gives us |
 |---|---|
-| Raju Maharjan (Kutumba), *[Ghin-Kha-Taang-Taak-Ghin-Ghin-Taang: It's that simple](https://kathmandupost.com/weekender/2020/03/06/ghin-kha-taang-taak-ghin-ghin-taang-it-s-that-simple)*, The Kathmandu Post, 2020 | The five basic strokes and how to play them, plus the Samala, Maruni and Sangini cycles |
 | [pbimal on Freesound](https://freesound.org/people/pbimal/packs/30009/), CC0 | One recording per stroke (Taang, Taak, Kha, Ghin/Dhin) with the technique documented for each, plus groove loops |
 | [Nepali Wikipedia: मादल](https://ne.wikipedia.org/wiki/मादल) | Construction (*khari* paste of rice, iron filings and similar), and head naming (larger head = *bhale*) |
 | C. V. Raman's work on loaded-membrane Indian drums (tabla, mridangam) | Why the *khari* load makes the partials of a head more harmonic and its pitch definite |
 
-## 2. The Strokes (Kutumba)
+## 2. The Five Basic Strokes
 
 | Stroke | Head | Technique | Sound |
 |---|---|---|---|
@@ -22,7 +21,7 @@ pitches and ring lengths in `packages/core/src/bols.ts`.
 | **Kha** (ख) | Large | Middle, ring and little fingers strike the *khari* and stay down | Muffled, closed |
 | **Dhang** (धाङ) | Both | Taang + Ghin together | Full, combined |
 
-Raju Maharjan puts *bhale* on the right, where Taang is played. Nepali Wikipedia calls the larger head
+Some teachers put *bhale* on the right, where Taang is played; Nepali Wikipedia calls the larger head
 *bhale*. The project keeps the Wikipedia naming (`bhale` = large/bass head in code). The stroke names
 do not depend on which convention you use.
 
