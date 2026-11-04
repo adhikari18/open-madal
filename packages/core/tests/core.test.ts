@@ -141,6 +141,48 @@ describe('@open-madal/core parser & AST', () => {
     expect(kaatBeats.map((t) => t.bol)).toEqual(['Tin', 'Ghe', 'Tin', 'Ghe', 'Tin', '-']);
   });
 
+  it('compiles Khyali Taal 8/8 Theka (Ghin - Kha Taang : Taak Ghin Ghin Taang), Uthaan, and Kaat', () => {
+    const khyaliPreset = TAAL_PRESETS.find((p) => p.id === 'khyali')!;
+    const ast = parseMadalCode(khyaliPreset.source);
+    expect(ast.metadata.taal).toBe('Khyali');
+    expect(ast.metadata.meter).toEqual({ beatsPerBar: 8, beatUnit: 8 });
+    expect(ast.metadata.taliBeats).toEqual([1]);
+    expect(ast.metadata.khaliBeats).toEqual([5]);
+
+    const thekaBeats = ast.sections[0].bars[0].beats.map((b) => b.subdivisions[0]);
+    // 1:Ghin (Ghe), 2:- (rest), 3:Kha (Ka), 4:Taang (Tin), 5:Taak (Ki), 6:Ghin (Ghe), 7:Ghin (Ghe), 8:Taang (Tin)
+    expect(thekaBeats.map((t) => t.bol)).toEqual([
+      'Ghe',
+      '-',
+      'Ka',
+      'Tin',
+      'Ki',
+      'Ghe',
+      'Ghe',
+      'Tin',
+    ]);
+    expect(thekaBeats[0].bhale?.articulation).toBe('open');
+    expect(thekaBeats[2].bhale?.articulation).toBe('closed');
+    expect(thekaBeats[3].pothi?.articulation).toBe('open');
+    expect(thekaBeats[4].pothi?.articulation).toBe('closed');
+    expect(thekaBeats[5].bhale?.articulation).toBe('open');
+    expect(thekaBeats[6].bhale?.articulation).toBe('open');
+    expect(thekaBeats[7].pothi?.articulation).toBe('open');
+
+    // Kaat section: | >Ghin Taang Taang Ghin : Taang Taang Ghin Taang |
+    const kaatBeats = ast.sections[2].bars[0].beats.map((b) => b.subdivisions[0]);
+    expect(kaatBeats.map((t) => t.bol)).toEqual([
+      'Ghe',
+      'Tin',
+      'Tin',
+      'Ghe',
+      'Tin',
+      'Tin',
+      'Ghe',
+      'Tin',
+    ]);
+  });
+
   it('normalizes regional oral dialect aliases (Ge -> Ghe, Tang -> Tin, Kat -> Ka) into canonical dual-head AST nodes', () => {
     const src = `
 @meter: 4/4

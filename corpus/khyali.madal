@@ -1,15 +1,25 @@
-# Classic Khyali Taal (8/8) — Rodhi, Bhajan & Adhunik Folk
-@title: Khyali Folk Cycle
+# Traditional Khyali Taal (8/8) — Lok Dohori, Adhunik Folk & Bhajan
+# Spoken rhyme (8 matras): १:धिङ  २:s  ३:ख  ४:ति  ५:ता  ६:क  ७:धि  ८:ना
+# Physical strokes:        १:घिं   २:X  ३:ख  ४:तां  ५:तक्  ६:घिं  ७:घिं  ८:तां
+# Uthaan (उठान): तां [घिं तां] तां [घिं तां] : तां [घिं तां] घिं तां
+# Kaat (काट):   १:घिं  २:तां  ३:तां  ४:घिं : ५:तां  ६:तां  ७:घिं  ८:तां
+@title: Traditional Khyali Taal
 @taal: Khyali
-@tempo: 118
+@tempo: 176
 @meter: 8/8
-@region: Pan-Nepali
-@tali: 1, 5
-@khali: 3, 7
+@region: Nepal (Lok Dohori, Adhunik Folk & Bhajan)
+@tali: 1
+@khali: 5
 
 [Theka]
-| >Dha Ti Ta Ghe : >Dhin Ta Ti - | x2
+| >Ghin - Kha Taang : Taak Ghin Ghin Taang | x4
 
-[Prakar]
-| >Dha [Ti Ta] Ka Ghe : >Dhin [Ta Ki] Tin - |
+[Uthaan]
+| >Taang [Ghin Taang] Taang [Ghin Taang] : Taang [Ghin Taang] Ghin Taang |
 
+[Kaat]
+| >Ghin Taang Taang Ghin : Taang Taang Ghin Taang |
+| >Ghin Taang - Taang : - - - - |
+
+[Laya Variation]
+| >Ghin - Kha Taang : Taang - Taang Ghin | x2

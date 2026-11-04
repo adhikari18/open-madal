@@ -62,15 +62,18 @@ What the numbers show:
 | Taal | Meter | Beat-by-beat cycle |
 |---|---|---|
 | **Jhyaure Taal** (झ्याउरे ताल) | 6/8 | `१: Ghin (घिं)` · `२: - (X)` · `३: Taang (तां)` · `४: Taak (तक्)` · `५: Ghin (घिं)` · `६: Taang (तां)`<br>**Kaat (काट):** `१: Taang (तां)` · `२: Ghin (घिं)` · `३: Taang (तां)` · `४: Ghin (घिं)` · `५: Taang (तां)` · `६: - (X)` |
+| **Khyali Taal** (ख्याली ताल) | 8/8 | `१: Ghin (घिं)` · `२: - (X)` · `३: Kha (ख)` · `४: Taang (तां)` · `५: Taak (तक्)` · `६: Ghin (घिं)` · `७: Ghin (घिं)` · `८: Taang (तां)` *(spoken: धिङ s ख ति ता क धि ना)*<br>**Uthaan (उठान):** `१: Taang` · `२: [Ghin Taang]` · `३: Taang` · `४: [Ghin Taang]` · `५: Taang` · `६: [Ghin Taang]` · `७: Ghin` · `८: Taang`<br>**Kaat (काट):** `१: Ghin` · `२: Taang` · `३: Taang` · `४: Ghin` · `५: Taang` · `६: Taang` · `७: Ghin` · `८: Taang` |
 | **Sangini Taal** (सङ्गिनी ताल) | 6/8 | `१: Ghin` · `२: Ghin` · `३: Taang` · `४: Taak` · `५: Ghin` · `६: Taang` |
 | **Samala Taal** (समला ताल) | 4/4 | `१: Ghin` · `२: [Kha Taang]` · `३: [Taak Ghin]` · `४: [Ghin Taang]` |
 | **Maruni Taal** (मारुनी ताल) | 4/4 | `१: Taang` · `२: [Kha Taang]` · `३: [Taang Ghin]` · `४: [Ghin Taang]` |
 
-Notice the relationship between 6/8 **Jhyaure** and **Sangini**: both share the same 6-count skeleton, except Beat 2 is a rest (`X`) in Jhyaure (letting Beat 1's *Ghin* ring across Beats 1–2) and a second *Ghin* in Sangini.
+Notice the structural relationships across these cycles:
+- **6/8 Jhyaure vs. Sangini:** Both share the same 6-count skeleton, except Beat 2 is a rest (`X`) in Jhyaure (letting Beat 1's *Ghin* ring across Beats 1–2) and a second *Ghin* in Sangini.
+- **8/8 Khyali vs. 4/4 Samala:** The 8-matra **Khyali** cycle (`Ghin - | Kha Taang | Taak Ghin | Ghin Taang`) is the exact 8-count expansion of the 4-count **Samala** cycle (`Ghin | [Kha Taang] | [Taak Ghin] | [Ghin Taang]`). In spoken Khyali mnemonics (`धिङ s ख ति ता क धि ना`), Beats 5–6 are recited as *"Taa-Ka"*, where *"Taa"* is physically played as a closed three-finger **Taak** on the small head and *"Ka"* as an open **Ghin** on the large head.
 
 ## 6. Open Questions
 
-- **Khyali, Tamang Selo and Chudka** are still the original project drafts, and their notation is not yet backed by a teacher or recording source.
+- **Tamang Selo and Chudka** are still the original project drafts, and their notation is not yet backed by a teacher or recording source.
 - The `Ghe^` / `Dhing` heel pitch-bend is kept from the original specification, but none of the sources above document it for madal.
 - Adding multi-velocity and round-robin one-shot recordings across madals of different sizes is the next step for realism.
 

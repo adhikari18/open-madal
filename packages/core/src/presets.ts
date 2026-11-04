@@ -45,24 +45,35 @@ export const TAAL_PRESETS: TaalPreset[] = [
     name: 'Khyali Taal',
     devanagariName: 'ख्याली ताल',
     meter: '8/8',
-    defaultTempo: 118,
-    region: 'Pan-Nepali (Folk, Bhajan & Rodhi)',
+    defaultTempo: 176,
+    region: 'Nepal (Lok Dohori, Adhunik Folk & Bhajan)',
     description:
-      'An 8-beat symmetrical cycle widely played in Rodhi gatherings, modern Adhunik folk-pop, and devotional Bhajans.',
-    source: `# Classic Khyali Taal (8/8)
-@title: Khyali Folk Cycle
+      '8-count cycle: Ghin - Kha Taang | Taak Ghin Ghin Taang (घिं X ख तां तक् घिं घिं तां; spoken: धिङ s ख ति ता क धि ना), with Uthaan pickup and Kaat turnaround.',
+    source: `# Traditional Khyali Taal (8/8)
+# Spoken rhyme (8 matras): १:धिङ  २:s  ३:ख  ४:ति  ५:ता  ६:क  ७:धि  ८:ना
+# Physical strokes:        १:घिं   २:X  ३:ख  ४:तां  ५:तक्  ६:घिं  ७:घिं  ८:तां
+# Uthaan (उठान): तां [घिं तां] तां [घिं तां] : तां [घिं तां] घिं तां
+# Kaat (काट):   १:घिं  २:तां  ३:तां  ४:घिं : ५:तां  ६:तां  ७:घिं  ८:तां
+@title: Traditional Khyali Taal
 @taal: Khyali
-@tempo: 118
+@tempo: 176
 @meter: 8/8
-@region: Pan-Nepali
-@tali: 1, 5
-@khali: 3, 7
+@region: Nepal (Lok Dohori, Adhunik Folk & Bhajan)
+@tali: 1
+@khali: 5
 
 [Theka]
-| >Dha Ti Ta Ghe : >Dhin Ta Ti - | x2
+| >Ghin - Kha Taang : Taak Ghin Ghin Taang | x4
 
-[Prakar]
-| >Dha [Ti Ta] Ka Ghe : >Dhin [Ta Ki] Tin - |`,
+[Uthaan]
+| >Taang [Ghin Taang] Taang [Ghin Taang] : Taang [Ghin Taang] Ghin Taang |
+
+[Kaat]
+| >Ghin Taang Taang Ghin : Taang Taang Ghin Taang |
+| >Ghin Taang - Taang : - - - - |
+
+[Laya Variation]
+| >Ghin - Kha Taang : Taang - Taang Ghin | x2`,
   },
   {
     id: 'tamang-selo',
