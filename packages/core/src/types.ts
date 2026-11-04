@@ -31,6 +31,38 @@ export type CanonicalBolId =
   | '-'
   | '~';
 
+/**
+ * Chromatic tonic scale (Sur / Key) of the Madal.
+ * 'C' corresponds to the reference recording (~266 Hz Pothi / ~174 Hz Bhale).
+ */
+export type MadalScale =
+  | 'C'
+  | 'C#'
+  | 'D'
+  | 'D#'
+  | 'E'
+  | 'F'
+  | 'F#'
+  | 'G'
+  | 'G#'
+  | 'A'
+  | 'A#'
+  | 'B';
+
+export interface MadalScaleInfo {
+  id: MadalScale;
+  /** Traditional Nepali harmonium scale name (Safed / Kali) */
+  harmoniumName: string;
+  /** Semitone shift relative to the reference C recording */
+  semitonesFromC: number;
+  /** Frequency multiplier relative to the reference C recording */
+  pitchRatio: number;
+  /** Approximate Bhale (large bass head) fundamental in Hz */
+  bhaleHz: number;
+  /** Approximate Pothi (small treble head) fundamental in Hz */
+  pothiHz: number;
+}
+
 export interface HeadStrokeSpec {
   /** Which head is struck */
   head: 'bhale' | 'pothi';
@@ -139,6 +171,8 @@ export interface MadalDocumentMetadata {
   taal: string;
   tempo: number;
   meter: TimeSignature;
+  /** Optional chromatic scale (Sur / Key) of the Madal, e.g. 'C', 'C#', 'D', 'F#', 'G' */
+  scale?: MadalScale;
   region?: string;
   composer?: string;
   /** 1-based beat numbers that carry a Tali (clap), Beat 1 is always Sam */

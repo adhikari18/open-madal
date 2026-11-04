@@ -1,4 +1,10 @@
-import { BOL_DICTIONARY, expandOrnamentalRoll, resolveBol } from './bols.js';
+import {
+  BOL_DICTIONARY,
+  DEFAULT_MADAL_SCALE,
+  expandOrnamentalRoll,
+  parseMadalScale,
+  resolveBol,
+} from './bols.js';
 import { addRational, createRational, divideRationalByInt, rationalToNumber } from './rational.js';
 import {
   BarNode,
@@ -19,6 +25,7 @@ const DEFAULT_METADATA: MadalDocumentMetadata = {
   taal: 'Jhyaure',
   tempo: 120,
   meter: { beatsPerBar: 6, beatUnit: 8 },
+  scale: DEFAULT_MADAL_SCALE,
   taliBeats: [1],
   khaliBeats: [4],
 };
@@ -437,8 +444,9 @@ export function parseMadalCode(source: string): MadalProgramAST {
 
   for (let i = 0; i < lines.length; i++) {
     const lineNum = i + 1;
-    // Strip inline comments (# or //)
-    const commentIndex = lines[i].search(/(?:#|\/\/)/);
+    // Strip inline comments (# at start of line or after whitespace, or //)
+    // so sharp scale names like C#, D#, F#, G#, A# are preserved
+    const commentIndex = lines[i].search(/(?:^#|(?<=\s)#|\/\/)/);
     const cleanLine = (commentIndex >= 0 ? lines[i].slice(0, commentIndex) : lines[i]).trim();
 
     if (!cleanLine) continue;
@@ -472,6 +480,22 @@ export function parseMadalCode(source: string): MadalProgramAST {
         case 'composer':
           metadata.composer = value;
           break;
+        case 'scale':
+        case 'key':
+        case 'sur': {
+          const parsedScale = parseMadalScale(value);
+          if (!parsedScale) {
+            diagnostics.push({
+              severity: 'warning',
+              message: `Invalid scale "${value}". Expected C, C#, D, D#, E, F, F#, G, G#, A, A#, or B.`,
+              line: lineNum,
+              column: 1,
+            });
+          } else {
+            metadata.scale = parsedScale;
+          }
+          break;
+        }
         case 'tempo':
         case 'bpm': {
           const bpm = parseFloat(value);

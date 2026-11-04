@@ -4,10 +4,14 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   BOL_DICTIONARY,
   CanonicalBolId,
+  DEFAULT_MADAL_SCALE,
+  MADAL_SCALES,
+  MadalScale,
   TAAL_PRESETS,
   compileToMidi,
   flattenTimeline,
   formatBolLabel,
+  getMadalScaleInfo,
   parseBolToken,
   parseMadalCode,
   renderLinearTabSVG,
@@ -131,6 +135,13 @@ export default function OpenMadalStudioPage() {
   const ast = useMemo(() => parseMadalCode(sourceCode), [sourceCode]);
   const validation = useMemo(() => validateMadalProgram(ast), [ast]);
   const timeline = useMemo(() => flattenTimeline(ast), [ast]);
+  const activeScale: MadalScale = ast.metadata.scale ?? DEFAULT_MADAL_SCALE;
+  const activeScaleInfo = useMemo(() => getMadalScaleInfo(activeScale), [activeScale]);
+
+  // Keep audio engine scale synced with document @scale
+  useEffect(() => {
+    getAudioEngine().setScale(activeScale);
+  }, [activeScale, getAudioEngine]);
 
   // Active beat inside the bar for the radial clock
   const activeBeatIndex = useMemo(() => {
@@ -244,6 +255,25 @@ export default function OpenMadalStudioPage() {
       }
       return `@tempo: ${newBpm}\n${prev}`;
     });
+  };
+
+  // Update @scale directive in source code and audition tonic Dhang in the selected scale
+  const handleScaleChange = (newScale: MadalScale) => {
+    const engine = getAudioEngine();
+    engine.setScale(newScale);
+    setSourceCode((prev) => {
+      if (/@(?:scale|key|sur)\s*:\s*[^\r\n]+/i.test(prev)) {
+        return prev.replace(/@(?:scale|key|sur)\s*:\s*[^\r\n]+/i, `@scale: ${newScale}`);
+      }
+      if (/@meter\s*:\s*[^\r\n]+/i.test(prev)) {
+        return prev.replace(/(@meter\s*:\s*[^\r\n]+)/i, `$1\n@scale: ${newScale}`);
+      }
+      return `@scale: ${newScale}\n${prev}`;
+    });
+    if (!isPlaying) {
+      const token = parseBolToken('Dha', 1, 1, 1, []);
+      engine.triggerBolToken(token, undefined, 110);
+    }
   };
 
   // Audition a single bol pad
@@ -450,6 +480,37 @@ export default function OpenMadalStudioPage() {
                 onChange={(e) => handleTempoChange(Number(e.target.value))}
                 className="w-full accent-orange-500 cursor-pointer"
               />
+            </div>
+
+            {/* Scale (Sur / Key) Selector */}
+            <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-400">
+                  Scale (Sur) • <span className="text-teal-300">{activeScaleInfo.harmoniumName}</span>
+                </span>
+                <span className="font-mono text-[11px] text-slate-300">
+                  Bhale {activeScaleInfo.bhaleHz} Hz • Pothi {activeScaleInfo.pothiHz} Hz
+                </span>
+              </div>
+              <div className="grid grid-cols-6 sm:grid-cols-12 gap-1">
+                {MADAL_SCALES.map((s) => {
+                  const isSelected = s.id === activeScale;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => handleScaleChange(s.id)}
+                      title={`${s.id} Scale (${s.harmoniumName}) — Bhale: ${s.bhaleHz} Hz, Pothi: ${s.pothiHz} Hz`}
+                      className={`py-1 rounded-md text-xs font-mono font-bold transition border ${
+                        isSelected
+                          ? 'bg-teal-500/25 border-teal-400 text-teal-200 shadow-sm'
+                          : 'bg-slate-900/80 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                      }`}
+                    >
+                      {s.id}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>

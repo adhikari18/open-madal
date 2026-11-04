@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   BOL_DICTIONARY,
+  MADAL_SCALES,
   TAAL_PRESETS,
   addRational,
   compileToMidi,
@@ -8,6 +9,7 @@ import {
   divideRationalByInt,
   flattenTimeline,
   formatRational,
+  getMadalScaleInfo,
   multiplyRational,
   parseMadalCode,
   renderLinearTabSVG,
@@ -431,6 +433,29 @@ describe('@open-madal/core parser & AST', () => {
     expect(svg).toContain('>Ri<');
     const clockSvg = renderRadialClockSVG(ast, { script: 'roman' });
     expect(clockSvg).toContain('[Ti Ra Ki Ta]');
+  });
+
+  it('parses @scale directives and computes 12 chromatic Madal scales', () => {
+    expect(MADAL_SCALES).toHaveLength(12);
+    const cScale = getMadalScaleInfo('C');
+    expect(cScale.pitchRatio).toBe(1);
+    expect(cScale.bhaleHz).toBe(174);
+    expect(cScale.pothiHz).toBe(266);
+
+    const fSharp = getMadalScaleInfo('F#');
+    expect(fSharp.semitonesFromC).toBe(6);
+    expect(fSharp.pitchRatio).toBeGreaterThan(1.41);
+
+    const ast = parseMadalCode(`
+@title: F# Scale Jhyaure
+@meter: 6/8
+@scale: F#
+| >Ghin - Taang : Taak Ghin Taang |
+`);
+    expect(ast.diagnostics).toHaveLength(0);
+    expect(ast.metadata.scale).toBe('F#');
+    const svg = renderLinearTabSVG(ast);
+    expect(svg).toContain('Scale: F#');
   });
 });
 

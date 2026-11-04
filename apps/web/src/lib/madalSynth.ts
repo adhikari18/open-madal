@@ -1,4 +1,11 @@
-import { BOL_DICTIONARY, BolTokenNode, HeadStrokeSpec } from '@open-madal/core';
+import {
+  BOL_DICTIONARY,
+  BolTokenNode,
+  DEFAULT_MADAL_SCALE,
+  HeadStrokeSpec,
+  MadalScale,
+  getMadalScaleInfo,
+} from '@open-madal/core';
 
 /**
  * Acoustic Madal voice engine.
@@ -201,6 +208,15 @@ export class MadalAudioEngine {
   private activeVoices: Record<'bhale' | 'pothi', ActiveVoice[]> = { bhale: [], pothi: [] };
   private pothiOpenToggle = 0;
   private bhaleOpenToggle = 0;
+  private currentScale: MadalScale = DEFAULT_MADAL_SCALE;
+
+  public setScale(scale: MadalScale): void {
+    this.currentScale = scale;
+  }
+
+  public getScale(): MadalScale {
+    return this.currentScale;
+  }
 
   /**
    * Fetch and decode the madal recordings. Safe to call before any user gesture: decoding
@@ -326,13 +342,18 @@ export class MadalAudioEngine {
   public triggerHeadStroke(spec: HeadStrokeSpec, when?: number, velocity = 100): void {
     const ctx = this.ensureContext();
     const now = Math.max(when ?? ctx.currentTime, ctx.currentTime);
-    const baseVoice = resolveVoice(spec);
-    const isClosed = spec.articulation === 'closed';
+    const scaleInfo = getMadalScaleInfo(this.currentScale);
+    const scaledSpec: HeadStrokeSpec =
+      scaleInfo.pitchRatio === 1
+        ? spec
+        : { ...spec, fundamentalHz: spec.fundamentalHz * scaleInfo.pitchRatio };
+    const baseVoice = resolveVoice(scaledSpec);
+    const isClosed = scaledSpec.articulation === 'closed';
 
     // Alternate between the two open Taang recordings on consecutive open Pothi strokes
     // so rapid treble rolls (Taang-Taang, Diri-Diri) never repeat an identical waveform.
     let sampleId: SampleId = baseVoice.sample;
-    if (spec.head === 'pothi' && !isClosed && this.samples['taang'] && this.samples['taang-2']) {
+    if (scaledSpec.head === 'pothi' && !isClosed && this.samples['taang'] && this.samples['taang-2']) {
       sampleId = this.pothiOpenToggle % 2 === 0 ? 'taang' : 'taang-2';
       this.pothiOpenToggle = (this.pothiOpenToggle + 1) % 2;
     }
@@ -346,22 +367,22 @@ export class MadalAudioEngine {
     const brightnessHz = 1600 + Math.pow(vel, 1.5) * 9000;
     // Slight micro-pitch alternation on consecutive open bass strokes prevents phase comb-filtering in rolls
     const rollMicroDetune =
-      spec.head === 'bhale' && !isClosed
+      scaledSpec.head === 'bhale' && !isClosed
         ? ((this.bhaleOpenToggle = (this.bhaleOpenToggle + 1) % 2) === 0 ? 1.002 : 0.998)
         : 1;
     const humanDetune = rollMicroDetune * (1 + (Math.random() - 0.5) * 0.004);
 
     // A new stroke on a head stops that head's previous ring as the fingers land on the skin.
-    this.chokeHead(spec.head, now, isClosed ? 0.008 : 0.014);
+    this.chokeHead(scaledSpec.head, now, isClosed ? 0.008 : 0.014);
 
-    const length = Math.max(0.05, spec.decaySec);
+    const length = Math.max(0.05, scaledSpec.decaySec);
     const buffer = this.samples[voice.sample];
     const output = buffer
-      ? this.playSample(ctx, spec, voice, buffer, now, length, amp, brightnessHz, humanDetune)
-      : this.playModal(ctx, spec, voice, now, length, amp, brightnessHz, humanDetune);
+      ? this.playSample(ctx, scaledSpec, voice, buffer, now, length, amp, brightnessHz, humanDetune)
+      : this.playModal(ctx, scaledSpec, voice, now, length, amp, brightnessHz, humanDetune);
 
-    this.activeVoices[spec.head].push(output);
-    this.activeVoices[spec.head] = this.activeVoices[spec.head].filter(
+    this.activeVoices[scaledSpec.head].push(output);
+    this.activeVoices[scaledSpec.head] = this.activeVoices[scaledSpec.head].filter(
       (v) => v.stopAt > ctx.currentTime
     );
   }

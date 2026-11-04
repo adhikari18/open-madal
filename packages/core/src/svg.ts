@@ -124,8 +124,8 @@ export function renderLinearTabSVG(
     )}</text>`
   );
   const subtitle = `Taal: ${ast.metadata.taal}  •  Meter: ${ast.metadata.meter.beatsPerBar}/${ast.metadata.meter.beatUnit}  •  Tempo: ${ast.metadata.tempo} BPM${
-    ast.metadata.region ? `  •  Region: ${ast.metadata.region}` : ''
-  }`;
+    ast.metadata.scale ? `  •  Scale: ${ast.metadata.scale}` : ''
+  }${ast.metadata.region ? `  •  Region: ${ast.metadata.region}` : ''}`;
   lines.push(
     `<text x="24" y="60" fill="${textMuted}" font-size="13" font-weight="500">${escapeXml(
       subtitle
@@ -325,7 +325,9 @@ export function renderRadialClockSVG(
   lines.push(
     `<text x="${cx}" y="${cy + 14}" text-anchor="middle" fill="#94a3b8" font-size="12" font-weight="500">${
       ast.metadata.meter.beatsPerBar
-    }/${ast.metadata.meter.beatUnit} • ${ast.metadata.tempo} BPM</text>`
+    }/${ast.metadata.meter.beatUnit} • ${ast.metadata.tempo} BPM${
+      ast.metadata.scale ? ` • ${escapeXml(ast.metadata.scale)}` : ''
+    }</text>`
   );
 
   const polygonPoints: string[] = [];

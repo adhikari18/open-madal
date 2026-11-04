@@ -1,4 +1,10 @@
-import { BolDefinition, CanonicalBolId, HeadStrokeSpec } from './types.js';
+import {
+  BolDefinition,
+  CanonicalBolId,
+  HeadStrokeSpec,
+  MadalScale,
+  MadalScaleInfo,
+} from './types.js';
 
 /*
  * Pitches and ring lengths below were measured from real madal recordings
@@ -359,4 +365,59 @@ export function resolveBol(rawName: string): BolDefinition | undefined {
 export function listAllBols(): BolDefinition[] {
   return Object.values(BOL_DICTIONARY);
 }
+
+export const DEFAULT_MADAL_SCALE: MadalScale = 'C';
+
+/**
+ * Chromatic scales (Sur) for the Nepali Madal, mapped around the natural acoustic range
+ * of the instrument (-4 to +7 semitones relative to the reference C recording).
+ */
+const SCALE_SEMITONE_DEFS: { id: MadalScale; harmoniumName: string; semitones: number }[] = [
+  { id: 'C', harmoniumName: 'सपेद १ (Safed 1)', semitones: 0 },
+  { id: 'C#', harmoniumName: 'काली १ (Kali 1)', semitones: 1 },
+  { id: 'D', harmoniumName: 'सपेद २ (Safed 2)', semitones: 2 },
+  { id: 'D#', harmoniumName: 'काली २ (Kali 2)', semitones: 3 },
+  { id: 'E', harmoniumName: 'सपेद ३ (Safed 3)', semitones: 4 },
+  { id: 'F', harmoniumName: 'सपेद ४ (Safed 4)', semitones: 5 },
+  { id: 'F#', harmoniumName: 'काली ३ (Kali 3)', semitones: 6 },
+  { id: 'G', harmoniumName: 'सपेद ५ (Safed 5)', semitones: 7 },
+  { id: 'G#', harmoniumName: 'काली ४ (Kali 4)', semitones: -4 },
+  { id: 'A', harmoniumName: 'सपेद ६ (Safed 6)', semitones: -3 },
+  { id: 'A#', harmoniumName: 'काली ५ (Kali 5)', semitones: -2 },
+  { id: 'B', harmoniumName: 'सपेद ७ (Safed 7)', semitones: -1 },
+];
+
+export const MADAL_SCALES: MadalScaleInfo[] = SCALE_SEMITONE_DEFS.map(
+  ({ id, harmoniumName, semitones }) => {
+    const pitchRatio = Math.pow(2, semitones / 12);
+    return {
+      id,
+      harmoniumName,
+      semitonesFromC: semitones,
+      pitchRatio: Number(pitchRatio.toFixed(5)),
+      bhaleHz: Math.round(174 * pitchRatio),
+      pothiHz: Math.round(266 * pitchRatio),
+    };
+  }
+);
+
+const FLAT_SCALE_ALIASES: Record<string, MadalScale> = {
+  DB: 'C#',
+  EB: 'D#',
+  GB: 'F#',
+  AB: 'G#',
+  BB: 'A#',
+};
+
+export function parseMadalScale(raw: string): MadalScale | null {
+  const cleaned = raw.trim().toUpperCase().replace(/♯/g, '#').replace(/♭/g, 'B');
+  const direct = MADAL_SCALES.find((s) => s.id === cleaned);
+  if (direct) return direct.id;
+  return FLAT_SCALE_ALIASES[cleaned] ?? null;
+}
+
+export function getMadalScaleInfo(scale: MadalScale = DEFAULT_MADAL_SCALE): MadalScaleInfo {
+  return MADAL_SCALES.find((s) => s.id === scale) ?? MADAL_SCALES[0];
+}
+
 
