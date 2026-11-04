@@ -112,6 +112,8 @@ interface ModalProfile {
   contactLevel: number;
 }
 
+// Levels are initial amplitudes, chosen so the 10-400 ms spectrum of the rendered stroke matches the
+// recording (verified by capturing Chrome's output and re-analysing it).
 const MODAL_PROFILES: Record<ModalProfileId, ModalProfile> = {
   // Taang: 270 Hz fundamental, flat octave at 1.86-1.9x, upper modes die in <0.5 s
   'pothi-open': {
@@ -130,7 +132,7 @@ const MODAL_PROFILES: Record<ModalProfileId, ModalProfile> = {
     referenceHz: 267,
     partials: [
       { ratio: 1.0, levelDb: 0, t60: 0.18 },
-      { ratio: 1.94, levelDb: -3, t60: 0.55 },
+      { ratio: 1.94, levelDb: -20, t60: 0.55 },
       { ratio: 2.95, levelDb: -21, t60: 0.22 },
       { ratio: 3.87, levelDb: -37, t60: 0.15 },
     ],
@@ -165,7 +167,7 @@ const MODAL_PROFILES: Record<ModalProfileId, ModalProfile> = {
     referenceHz: 177,
     partials: [
       { ratio: 1.0, levelDb: 0, t60: 0.28 },
-      { ratio: 1.63, levelDb: -14, t60: 0.51 },
+      { ratio: 1.63, levelDb: -24, t60: 0.51 },
       { ratio: 2.48, levelDb: -33, t60: 0.17 },
       { ratio: 2.7, levelDb: -30, t60: 0.17 },
     ],
@@ -217,7 +219,9 @@ export class MadalAudioEngine {
           const data = await res.arrayBuffer();
           this.samples[id] = await decoder.decodeAudioData(data);
         } catch (err) {
-          console.warn(`[open-madal] Could not load ${SAMPLE_FILES[id]}; using modal synthesis.`, err);
+          console.warn(
+            `[open-madal] Could not load ${SAMPLE_FILES[id]} (${String(err)}); using modal synthesis.`
+          );
         }
       })
     ).then(() => undefined);
